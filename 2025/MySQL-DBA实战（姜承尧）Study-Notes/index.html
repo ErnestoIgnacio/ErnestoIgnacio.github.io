@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Ernesto Ignacio&#39;s Blog">
+    <meta name="author" content="Ernesto Ignacio">
+    
+    <title>
+        
+            MySQL DBA实战（姜承尧）Study Notes |
+        
+        Ernesto Ignacio&#39;s Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+        <link rel="shortcut icon" href="https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/avatar.45ve77572.svg">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/brands.min.css">
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"ernestoignacio.github.io","root":"/","language":"en","path":"search.json"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#b2bec3","title":"Ernesto Ignacio's Blog","author":"Ernesto Ignacio","avatar":"https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/avatar.45ve77572.svg","logo":"https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/avatar.45ve77572.svg","favicon":"https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/avatar.45ve77572.svg","mode":"light"},"menu":{"home":"/","archives":"/archives"},"first_screen":{"enable":true,"background_img":"https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/bg.6pnp58bk7c.webp","background_img_dark":"https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/bg.6pnp58bk7c.webp","description":"Stay Hungry Stay Foolish","hitokoto":false},"social_contact":{"enable":true,"links":{"github":"https://github.com/ErnestoIgnacio","weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"x":null,"facebook":null,"email":"ernst.ignis@gmail.com"}},"scroll":{"progress_bar":true,"percent":true,"hide_header":true},"home":{"announcement":null,"category":true,"tag":true,"post_datetime":"updated","post_datetime_format":"YYYY-MM-DD"},"post":{"author_badge":{"enable":false,"level_badge":true,"custom_badge":["One","Two","Three"]},"word_count":{"wordcount":true,"min2read":true},"datetime_format":"YYYY-MM-DD","copyright_info":true,"share":true,"reward":{"enable":false,"img_link":null,"text":null,"icon":null},"img_align":"center","created_datetime_icon":"fa-solid fa-calendar-plus","updated_datetime_icon":"fa-solid fa-file-pen"},"code_block":{"tools":{"enable":true,"style":"mac"},"highlight_theme":"obsidian"},"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":true,"page_pv":true}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.39"},"waline":{"server_url":null,"reaction":false,"version":"3.3.2"},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":true},"lazyload":{"enable":true},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":true},"footer":{"since":2017,"word_count":true,"site_deploy":{"enable":true,"provider":"github","url":null},"record":{"enable":false,"list":[{"code":null,"link":null}]}},"inject":{"enable":false,"css":[null],"js":[null]},"mermaid":{"enable":true,"version":"10.5.0"},"root":"","source_data":{},"version":"4.2.5"}
+    KEEP.language_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"}
+    KEEP.language_code_block = {"copy":"Copy code","copied":"Copied","fold":"Fold code block","folded":"Folded"}
+    KEEP.language_copy_copyright = {"copy":"Copy copyright info","copied":"Copied","title":"Original post title","author":"Original post author","link":"Original post link"}
+  </script>
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Ernesto Ignacio's Blog" type="application/atom+xml">
+</head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <i class="pjax-progress-icon fas fa-circle-notch fa-spin"></i>
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left flex-start border-box">
+            
+                <a class="logo-image border-box" href="/">
+                    <img src="https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/avatar.45ve77572.svg">
+                </a>
+            
+            <a class="site-name border-box" href="/">
+               Ernesto Ignacio&#39;s Blog
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc border-box">
+                <ul class="menu-list border-box">
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/">
+                                
+                                HOME
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/archives">
+                                
+                                ARCHIVES
+                                
+                            </a>
+                            
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="menu-text-color fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile border-box flex-start">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list border-box">
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/">
+                            
+                            HOME
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/archives">
+                            
+                            ARCHIVES
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        MySQL DBA实战（姜承尧）Study Notes
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/avatar.45ve77572.svg">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">Ernesto Ignacio</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2025-04-26</span>
+            </span>
+
+            
+                <span class="meta-info-item post-update-date">
+                    <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                    <span class="datetime" data-updated="Thu Oct 09 2025 08:38:49 GMT-0500">2025-10-09</span>
+                </span>
+            
+        
+
+        
+            <span class="meta-info-item post-category border-box"><i class="icon fas fa-folder"></i>&nbsp;
+                <ul class="post-category-ul">
+                    
+                            <li class="category-item"><a href="/categories/DataBase/">DataBase</a></li>
+                        
+                    
+                            <li class="category-item">&nbsp;<i class="icon fas fa-angle-right"></i>&nbsp;<a href="/categories/DataBase/MySQL/">MySQL</a></li>
+                        
+                    
+                </ul>
+            </span>
+        
+
+        
+            <span class="post-tag meta-info-item border-box">
+                <ul class="post-tag-ul">
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/Mysql/">Mysql</a></li>
+                        
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/DataBase/">DataBase</a></li>
+                        
+                    
+                </ul>
+            </span>
+        
+
+        
+        
+            <span class="meta-info-item post-wordcount">
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>2k Words</span>
+            </span>
+        
+        
+            <span class="meta-info-item post-min2read">
+                <i class="icon fas fa-clock"></i>&nbsp;<span>8 Mins</span>
+            </span>
+        
+        
+            <span class="meta-info-item post-pv">
+                <i class="icon fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body ">
+                    
+
+                    
+                         <p>《新版MySQL DBA实战进阶班》姜承尧（腾讯数据库总监）讲解学习笔记</p>
+<span id="more"></span>
+<br/>
+
+<h1 id="01-MySQL简介与前景"><a href="#01-MySQL简介与前景" class="headerlink" title="01 MySQL简介与前景"></a>01 MySQL简介与前景</h1><blockquote>
+<p>MySQL的发展历史</p>
+<p>MySQL的分支版本</p>
+<p>MySQL vs MySQL其它版本 对比</p>
+<p>MySQL版本比较</p>
+</blockquote>
+<br/>
+
+<br/>
+
+<br/>
+
+<h1 id="02-MySQL安装与基本命令"><a href="#02-MySQL安装与基本命令" class="headerlink" title="02 MySQL安装与基本命令"></a>02 MySQL安装与基本命令</h1><h2 id="MySQL安装步骤说明"><a href="#MySQL安装步骤说明" class="headerlink" title="MySQL安装步骤说明"></a>MySQL安装步骤说明</h2><p>（1）操作系统环境准备</p>
+<ul>
+<li><p>卸载操作系统可能自带的MariaDB</p>
+</li>
+<li><p>安装MySQL相关依赖包</p>
+</li>
+</ul>
+<p>（2）创建用户、目录</p>
+<ul>
+<li><p>创建MySQL用户和用户组</p>
+</li>
+<li><p>创建目录</p>
+</li>
+</ul>
+<p>（3）下载、校验、设置权限、安装、启动</p>
+<ul>
+<li>下载MySQL安装包并校验</li>
+<li>初始化MySQL数据库<ul>
+<li><font color="red"><strong>注意：根据安装经验，最好先将</strong>     <code>/etc/my.cnf</code>    这个文件配置好，再初始化数据库。否则，初始化数据库再配置这个文件，再次启动mysql会有问题</font></li>
+</ul>
+</li>
+<li>启动MySQL</li>
+</ul>
+<p>（4）安装后设置</p>
+<ul>
+<li>将MySQL添加到开机启动项</li>
+<li>修改MySQL初始密码</li>
+</ul>
+<p>（5）其它配置</p>
+<br/>
+
+<br/>
+
+<h2 id="MySQL-5-7安装"><a href="#MySQL-5-7安装" class="headerlink" title="MySQL 5.7安装"></a>MySQL 5.7安装</h2><p>（1）操作系统环境准备</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">卸载操作系统可能自带的MariaDB</span></span><br><span class="line">rpm -qa | grep mariadb | xargs yum remove -y</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">安装MySQL相关依赖包</span></span><br><span class="line">yum install -y libaio</span><br></pre></td></tr></table></figure>
+
+<p>（2）创建用户、目录</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">创建MySQL用户和用户组</span></span><br><span class="line">groupadd mysql</span><br><span class="line">useradd -r -g mysql mysql</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">创建MySQL相关目录</span></span><br><span class="line">mkdir -p /install /bak /mysql_data /archive</span><br></pre></td></tr></table></figure>
+
+<p>（3）下载、校验、设置权限、安装、启动</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">下载MySQL安装包（根据服务器自身资源目录选择下载到哪个目录）</span></span><br><span class="line">wget https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.16-linux-glibc2.5-x86_64.tar.gz</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">校验安装包的正确性</span></span><br><span class="line">md5sum mysql-5.7.16-linux-glibc2.5-x86_64.tar.gz</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">解压</span></span><br><span class="line">tar zxvf mysql-5.7.16-linux-glibc2.5-x86_64.tar.gz -C /usr/local/</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">创建软连接 便于管理维护</span></span><br><span class="line">ln -s /usr/local/mysql-5.7.16-linux-glibc2.5-x86_64/ mysql</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置目录权限</span></span><br><span class="line">cd /usr/local/mysql</span><br><span class="line">chown -R mysql .</span><br><span class="line">chgrp -R mysql .</span><br><span class="line">chown mysql:mysql -R /mysql_data/</span><br><span class="line">chmod 750 /mysql_data/</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">配置/etc/my.cnf（略）</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">初始化MySQL数据库（初始化后，初始密码在error.log日志中）</span></span><br><span class="line">/usr/local/mysql/bin/mysqld --initialize --user=mysql</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启动MySQL</span></span><br><span class="line">/usr/local/mysql/bin/mysqld_safe --user=mysql &amp;</span><br></pre></td></tr></table></figure>
+
+<p>（4）安装后设置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将MySQL添加到开机启动项</span></span><br><span class="line">cp /usr/local/mysql/support-files/mysql.server /etc/init.d/mysql.server</span><br><span class="line">chkconfig --add mysql.server</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修改初始密码（5.7版本）</span></span><br><span class="line">set password=&#x27;mysql&#x27;;</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+
+<br/>
+
+<br/>
+
+<h2 id="MySQL-5-6安装"><a href="#MySQL-5-6安装" class="headerlink" title="MySQL 5.6安装"></a>MySQL 5.6安装</h2><p>（1）操作系统环境准备</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">卸载操作系统可能自带的MariaDB</span></span><br><span class="line">rpm -qa | grep mariadb | xargs yum remove -y</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">安装MySQL相关依赖包</span></span><br><span class="line">yum install -y libaio</span><br><span class="line">yum install perl-DBI perl-DBD-MySQL</span><br></pre></td></tr></table></figure>
+
+<p>（2）创建用户、目录</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">创建MySQL用户和用户组</span></span><br><span class="line">groupadd mysql</span><br><span class="line">useradd -r -g mysql mysql</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">创建MySQL相关目录</span></span><br><span class="line">mkdir -p /install /bak /mysql_data /archive</span><br></pre></td></tr></table></figure>
+
+<p>（3）下载、校验、设置权限、安装</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">下载MySQL安装包（根据服务器自身资源目录选择下载到哪个目录）</span></span><br><span class="line">wget https://downloads.mysql.com/archives/get/p/23/file/mysql-5.6.28-linux-glibc2.5-x86_64.tar.gz</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">校验安装包的正确性</span></span><br><span class="line">md5sum mysql-5.6.28-linux-glibc2.5-x86_64.tar.gz</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">解压</span></span><br><span class="line">tar zxvf mysql-5.6.28-linux-glibc2.5-x86_64.tar.gz -C /usr/local/</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">创建软连接 便于管理维护</span></span><br><span class="line">ln -s /usr/local/mysql-5.6.28-linux-glibc2.5-x86_64/ mysql</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置目录权限</span></span><br><span class="line">cd /usr/local/mysql</span><br><span class="line">chown -R mysql:mysql .</span><br><span class="line"></span><br><span class="line">chown mysql:mysql -R /mysql_data/</span><br><span class="line">chmod 750 /mysql_data/</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">配置/etc/my.cnf（略）</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">初始化MySQL数据库（5.6版本初始化后数据库没有默认密码）</span></span><br><span class="line">scripts/mysql_install_db --user=mysql</span><br></pre></td></tr></table></figure>
+
+<p>（4）安装后设置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置目录权限</span></span><br><span class="line">chown -R root .</span><br><span class="line">chown -R mysql /mysql_data/</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启动MySQL</span></span><br><span class="line">bin/mysqld_safe --user=mysql &amp;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将MySQL添加到开机启动项</span></span><br><span class="line">cp support-files/mysql.server /etc/init.d/mysql.server</span><br><span class="line">chkconfig --add mysql.server</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置初始密码（5.6版本）</span></span><br><span class="line">set password=password(&#x27;mysql&#x27;);</span><br><span class="line">flush privileges;</span><br></pre></td></tr></table></figure>
+
+<br/>
+
+<br/>
+
+<h2 id="MySQL-5-7-与-MySQL-5-6-的安装差异"><a href="#MySQL-5-7-与-MySQL-5-6-的安装差异" class="headerlink" title="MySQL 5.7 与 MySQL 5.6 的安装差异"></a>MySQL 5.7 与 MySQL 5.6 的安装差异</h2><p>（1）初始化数据库的命令不同</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">5.7 初始化MySQL数据库</span></span><br><span class="line">bin/mysqld --initialize --user=mysql</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">5.6 初始化MySQL数据库</span></span><br><span class="line">scripts/mysql_install_db --user=mysql</span><br></pre></td></tr></table></figure>
+
+<p>（2）初始密码不同</p>
+<ul>
+<li>MySQL5.6安装后默认没有密码</li>
+<li>MySQL5.7安装后初始密码在<code>error.log</code>日志中</li>
+<li>如果希望MySQL5.7安装初始化的时候表现跟MySQL5.6一样-没有密码，则可以在初始化数据库的语句中	<code>bin/mysqld --initialize --user=mysql</code>，把	<code>--initialize</code>	替换成	<code>--initialize-insecure</code>。（可以通过	 <code>mysqld --verbose --help | less	</code>查看到两个参数的说明）</li>
+</ul>
+<p>（3）设置密码的方式不同</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 5.7 设置密码</span><br><span class="line">set password=&#x27;mysql&#x27;;</span><br><span class="line"></span><br><span class="line"># 5.6 设置密码</span><br><span class="line">set password=password(&#x27;mysql&#x27;);</span><br></pre></td></tr></table></figure>
+
+<br/>
+
+<br/>
+
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">show databases;</span><br><span class="line">show tables;</span><br><span class="line">mysql --help --verbose</span><br></pre></td></tr></table></figure>
+
+<br/>
+
+<br/>
+
+<h2 id="默认数据库介绍"><a href="#默认数据库介绍" class="headerlink" title="默认数据库介绍"></a>默认数据库介绍</h2><ul>
+<li><code>information_schema</code><ul>
+<li>数据架构表（元数据表）</li>
+</ul>
+</li>
+<li><code>mysql</code><ul>
+<li>记录用户登录信息相关的表</li>
+</ul>
+</li>
+<li><code>performance_schema</code><ul>
+<li>记录数据库的性能监控相关信息表</li>
+</ul>
+</li>
+<li><code>sys</code><ul>
+<li>MySQL5.7新增的数据库，将<code>performance_schema</code>的复杂表整理成的视图存储在该库</li>
+</ul>
+</li>
+<li><code>test</code><ul>
+<li>MySQL5.6版本有该库，5.7版本没有该库</li>
+</ul>
+</li>
+</ul>
+<br/>
+
+<br/>
+
+<h2 id="MySQL跨版本升级"><a href="#MySQL跨版本升级" class="headerlink" title="MySQL跨版本升级"></a>MySQL跨版本升级</h2><h3 id="5-6（或5-x）升级5-7"><a href="#5-6（或5-x）升级5-7" class="headerlink" title="5.6（或5.x）升级5.7"></a>5.6（或5.x）升级5.7</h3><p>（1）准备好两个版本的安装包，并初始化</p>
+<p>（2）停止数据库，将软链接从低版本指向高版本，然后重启数据库</p>
+<p>（3）重启后日志中会有报错，可以执行<code>mysql_upgrade -uroot -p</code>命令来升级表</p>
+<br/>
+
+<br/>
+
+<h2 id="my-cnf"><a href="#my-cnf" class="headerlink" title="my.cnf"></a>my.cnf</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[client]</span><br><span class="line"># 所有客户端登录进去后可以配置的参数</span><br><span class="line">#  mysql这个命令每次启动的时候，会去读配置文件，读到[client]标签，会自动把用户名和密码添加到后面。所以输入 mysql 后回车便可直接登录</span><br><span class="line">user = root</span><br><span class="line">password = mysql</span><br><span class="line"></span><br><span class="line">[mysql]</span><br><span class="line"># mysql这个命名登录进去后终端显示配置</span><br><span class="line">prompt = (\u@\h) [\d]&gt;\_</span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line"># mysql服务器启动时候的参数</span><br><span class="line">port = 3306</span><br><span class="line">user = mysql</span><br><span class="line">datadir = /mysql_data</span><br><span class="line">log_error = error.log</span><br></pre></td></tr></table></figure>
+
+<br/>
+
+<br/>
+
+<br/>
+
+<h1 id="03-MySQL客户端连接与权限管理"><a href="#03-MySQL客户端连接与权限管理" class="headerlink" title="03 MySQL客户端连接与权限管理"></a>03 MySQL客户端连接与权限管理</h1><h2 id="mysql-best-configuration"><a href="#mysql-best-configuration" class="headerlink" title="mysql best configuration"></a>mysql best configuration</h2><p><a class="link"   target="_blank" rel="noopener" href="https://github.com/jdaaaaaavid/mysql_best_configuration/blob/master/my.cnf" > mysql_best_configuration<i class="fas fa-external-link-alt"></i></a></p>
+<br/>
+
+<br/>
+
+<h2 id="MySQL可以有多个配置文件"><a href="#MySQL可以有多个配置文件" class="headerlink" title="MySQL可以有多个配置文件"></a>MySQL可以有多个配置文件</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># mysql 在启动的时候会依次去读取下面的文件，遵循参数替换原则。后面的参数会替换前面的参数</span><br><span class="line">[root@localhost data]# mysql --verbose --help | grep my.cnf</span><br><span class="line">                      order of preference, my.cnf, $MYSQL_TCP_PORT,</span><br><span class="line">/etc/my.cnf /etc/mysql/my.cnf /usr/local/mysql/etc/my.cnf ~/.my.cnf</span><br></pre></td></tr></table></figure>
+
+<br/>
+
+<br/>
+
+<h2 id="MySQL的配置参数"><a href="#MySQL的配置参数" class="headerlink" title="MySQL的配置参数"></a>MySQL的配置参数</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[client]</span><br><span class="line"># 所有客户端登录进去后可以配置的参数</span><br><span class="line"></span><br><span class="line">[mysql]</span><br><span class="line"># mysql这个命令登录进去后配置的参数</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line"># mysql服务器启动时候的参数</span><br><span class="line">port = 3306</span><br><span class="line">user = mysql</span><br><span class="line">datadir = /mysql_data</span><br><span class="line">log_error = error.log</span><br></pre></td></tr></table></figure>
+
+<br/>
+
+<br/>
+
+<h2 id="查看mysql的参数，当前配置的值"><a href="#查看mysql的参数，当前配置的值" class="headerlink" title="查看mysql的参数，当前配置的值"></a>查看mysql的参数，当前配置的值</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 查看session级别的参数值（默认省略了session）</span><br><span class="line">show variables;</span><br><span class="line"></span><br><span class="line">show session variables;</span><br><span class="line"></span><br><span class="line">show variables like &#x27;log_error&#x27;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 查看global级别的参数值（默认省略了session）</span><br><span class="line">show global variables like &#x27;%log%&#x27;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 对已经创建的连接不生效，只对新创建的连接生效</span><br><span class="line">set global long_query_time=5;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th align="center">命令</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">SHOW [GLOBAL |SESSION] VARIABLES [LIKE  ‘pattern’ |WHERE expr]</td>
+<td align="center">查看变量，可根据like进行过滤</td>
+</tr>
+<tr>
+<td align="center">SET [GLOBAL|SESSION] VARIABLES &#x3D; xxx</td>
+<td align="center">修改global或session的参数</td>
+</tr>
+</tbody></table>
+<br/>
+
+<br/>
+
+<h2 id="MySQL的参数分类"><a href="#MySQL的参数分类" class="headerlink" title="MySQL的参数分类"></a>MySQL的参数分类</h2><ul>
+<li>从作用域上可分为global和session<ul>
+<li>seesion：只对当前这一个连接有效</li>
+<li>global：全局有效</li>
+</ul>
+</li>
+<li>从类型上又可分为可修改和只读参数<ul>
+<li>用户可在线修改非只读参数</li>
+<li>只读参数只能通过配置文件修改并重启</li>
+<li>所有参数的修改都不持久化</li>
+</ul>
+</li>
+</ul>
+<h3 id="当前会话下，查看其它连接的-variables"><a href="#当前会话下，查看其它连接的-variables" class="headerlink" title="当前会话下，查看其它连接的 variables"></a>当前会话下，查看其它连接的 variables</h3><ul>
+<li>mysql5.7开始，多了一个数据库	<code>performance_schema</code></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">use performance_schema;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">show tables like &#x27;%variables%&#x27;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">(root@localhost) [performance_schema]&gt; select * from variables_by_thread where variable_name = &#x27;long_query_time&#x27;;</span><br><span class="line">+-----------+-----------------+----------------+</span><br><span class="line">| THREAD_ID | VARIABLE_NAME   | VARIABLE_VALUE |</span><br><span class="line">+-----------+-----------------+----------------+</span><br><span class="line">|        31 | long_query_time | 10.000000      |</span><br><span class="line">|        33 | long_query_time | 10.000000      |</span><br><span class="line">+-----------+-----------------+----------------+</span><br><span class="line">2 rows in set (0.00 sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 查看当前连接到mysql的线程列表，以及它在做什么事情；</span><br><span class="line">(root@localhost) [performance_schema]&gt; show processlist;</span><br><span class="line">+----+------+-----------+--------------------+---------+------+----------+------------------+</span><br><span class="line">| Id | User | Host      | db                 | Command | Time | State    | Info             |</span><br><span class="line">+----+------+-----------+--------------------+---------+------+----------+------------------+</span><br><span class="line">|  6 | root | localhost | performance_schema | Sleep   |  766 |          | NULL             |</span><br><span class="line">|  8 | root | localhost | performance_schema | Query   |    0 | starting | show processlist |</span><br><span class="line">+----+------+-----------+--------------------+---------+------+----------+------------------+</span><br><span class="line">2 rows in set (0.00 sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 查看当前连接的id，这个id在processlist 里面</span><br><span class="line">(root@localhost) [performance_schema]&gt; select connection_id();</span><br><span class="line">+-----------------+</span><br><span class="line">| connection_id() |</span><br><span class="line">+-----------------+</span><br><span class="line">|               8 |</span><br><span class="line">+-----------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 这张表里 有 thread_id 和 processlist_id，通过这张表，做关联查询，则可以查询其它会话的变量值</span><br><span class="line">(root@localhost) [performance_schema]&gt; select * from threads limit 1\G</span><br><span class="line">*************************** 1. row ***************************</span><br><span class="line">          THREAD_ID: 1</span><br><span class="line">               NAME: thread/sql/main</span><br><span class="line">               TYPE: BACKGROUND</span><br><span class="line">     PROCESSLIST_ID: NULL</span><br><span class="line">   PROCESSLIST_USER: NULL</span><br><span class="line">   PROCESSLIST_HOST: NULL</span><br><span class="line">     PROCESSLIST_DB: NULL</span><br><span class="line">PROCESSLIST_COMMAND: NULL</span><br><span class="line">   PROCESSLIST_TIME: 1967</span><br><span class="line">  PROCESSLIST_STATE: NULL</span><br><span class="line">   PROCESSLIST_INFO: NULL</span><br><span class="line">   PARENT_THREAD_ID: NULL</span><br><span class="line">               ROLE: NULL</span><br><span class="line">       INSTRUMENTED: YES</span><br><span class="line">            HISTORY: YES</span><br><span class="line">    CONNECTION_TYPE: NULL</span><br><span class="line">       THREAD_OS_ID: 3562</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+
+<h2 id="权限管理"><a href="#权限管理" class="headerlink" title="权限管理"></a>权限管理</h2><ul>
+<li>mysql的权限认证分成：用户名、密码、IP</li>
+</ul>
+<br/>
+
+<br/>
+
+<br/>
+
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><br/>
+
+<br/>
+
+<br/>
+
+<h1 id="remark"><a href="#remark" class="headerlink" title="remark"></a>remark</h1><blockquote>
+<ol>
+<li>熟练使用MySQL官方文档</li>
+</ol>
+</blockquote>
+<img src='' width='70%' />
+
+
+
+
+                    
+                </div>
+
+                
+                        
+<div class="post-copyright-info-container border-box">
+    <div class="copyright-info-content border-box">
+        <div class="copyright-info-top border-box">
+            <div class="copyright-post-title border-box text-ellipsis">
+                MySQL DBA实战（姜承尧）Study Notes
+            </div>
+
+            <div class="copyright-post-link border-box text-ellipsis">
+                2025/MySQL-DBA实战（姜承尧）Study-Notes/
+            </div>
+        </div>
+
+        <div class="copyright-info-bottom border-box">
+            <div class="copyright-post-author bottom-item">
+                <div class="type">
+                    Author
+                </div>
+                <div class="content">Ernesto Ignacio</div>
+            </div>
+
+            <div class="post-time bottom-item">
+                <div class="type">
+                    Published
+                </div>
+                <div class="content">2025-04-26 11:46</div>
+            </div>
+
+
+            <div class="post-license bottom-item">
+                <div class="type">
+                    License
+                </div>
+                <div class="content tooltip" data-tooltip-content="CC BY-NC-SA 4.0">
+                    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed" target="_blank">
+                        
+                            <i class="fa-brands fa-creative-commons"></i>
+                            <i class="fa-brands fa-creative-commons-by"></i>
+                            <i class="fa-brands fa-creative-commons-nc"></i>
+                            <i class="fa-brands fa-creative-commons-sa"></i>
+                        
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <i class="copyright-bg fa-solid fa-copyright"></i>
+    </div>
+    <div class="copy-copyright-info flex-center tooltip" data-tooltip-content="Copy copyright info" data-tooltip-offset-y="-2px">
+        <i class="fa-solid fa-copy"></i>
+    </div>
+</div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                            <ul class="post-tags-box border-box">
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/Mysql/">Mysql</a>
+                                    </li>
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/DataBase/">DataBase</a>
+                                    </li>
+                                
+                            </ul>
+                        
+                    </div>
+                    <div>
+                        
+                            <div class="post-share-container border-box">
+    <ul class="share-list-wrap border-box">
+        <li class="qq share-item border-box flex-center tooltip"
+            data-tooltip-content="Share to QQ"
+        >
+            <i class="fa-brands fa-qq"></i>
+        </li>
+        <li class="wechat share-item border-box flex-center tooltip tooltip-img"
+            data-tooltip-content="Share to WeChat"
+            data-tooltip-img-tip="Scan by WeChat"
+            data-tooltip-img-style="background-color: #fff; top: -10px; padding: 0.6rem 0.6rem 0.1rem 0.6rem;"
+        >
+            <i class="fa-brands fa-weixin"></i>
+        </li>
+        <li class="weibo share-item border-box flex-center tooltip"
+            data-tooltip-content="Share to WeiBo"
+        >
+            <i class="fa-brands fa-weibo"></i>
+        </li>
+    </ul>
+</div>
+
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                            <div class="prev-post">
+                                <a class="prev"
+                                   rel="prev"
+                                   href="/2025/%E5%A6%82%E4%BD%95%E6%88%90%E4%B8%BA%E5%AD%A6%E4%B9%A0%E9%AB%98%E6%89%8B-Study-Notes/"
+                                   title="如何成为学习高手 Study Notes"
+                                >
+                                    <span class="left arrow-icon flex-center">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">如何成为学习高手 Study Notes</span>
+                                        <span class="post-nav-item">Prev posts</span>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2025/Nacos-%E6%A0%B8%E5%BF%83%E5%8E%9F%E7%90%86%E8%A7%A3%E8%AF%BB-%E9%AB%98%E6%80%A7%E8%83%BD%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%B3%BB%E7%BB%9F%E5%AE%9E%E6%88%98-Study-Notes/"
+                                   title="Nacos 核心原理解读+高性能微服务系统实战 Study Notes"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">Nacos 核心原理解读+高性能微服务系统实战 Study Notes</span>
+                                        <span class="post-nav-item">Next posts</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+            <div class="pc-post-toc right-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#01-MySQL%E7%AE%80%E4%BB%8B%E4%B8%8E%E5%89%8D%E6%99%AF"><span class="nav-text">01 MySQL简介与前景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#02-MySQL%E5%AE%89%E8%A3%85%E4%B8%8E%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4"><span class="nav-text">02 MySQL安装与基本命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E5%AE%89%E8%A3%85%E6%AD%A5%E9%AA%A4%E8%AF%B4%E6%98%8E"><span class="nav-text">MySQL安装步骤说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-5-7%E5%AE%89%E8%A3%85"><span class="nav-text">MySQL 5.7安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-5-6%E5%AE%89%E8%A3%85"><span class="nav-text">MySQL 5.6安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-5-7-%E4%B8%8E-MySQL-5-6-%E7%9A%84%E5%AE%89%E8%A3%85%E5%B7%AE%E5%BC%82"><span class="nav-text">MySQL 5.7 与 MySQL 5.6 的安装差异</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-text">常用命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BB%8B%E7%BB%8D"><span class="nav-text">默认数据库介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E8%B7%A8%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7"><span class="nav-text">MySQL跨版本升级</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-6%EF%BC%88%E6%88%965-x%EF%BC%89%E5%8D%87%E7%BA%A75-7"><span class="nav-text">5.6（或5.x）升级5.7</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#my-cnf"><span class="nav-text">my.cnf</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#03-MySQL%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%BF%9E%E6%8E%A5%E4%B8%8E%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86"><span class="nav-text">03 MySQL客户端连接与权限管理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql-best-configuration"><span class="nav-text">mysql best configuration</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E5%8F%AF%E4%BB%A5%E6%9C%89%E5%A4%9A%E4%B8%AA%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">MySQL可以有多个配置文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E7%9A%84%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0"><span class="nav-text">MySQL的配置参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bmysql%E7%9A%84%E5%8F%82%E6%95%B0%EF%BC%8C%E5%BD%93%E5%89%8D%E9%85%8D%E7%BD%AE%E7%9A%84%E5%80%BC"><span class="nav-text">查看mysql的参数，当前配置的值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E7%9A%84%E5%8F%82%E6%95%B0%E5%88%86%E7%B1%BB"><span class="nav-text">MySQL的参数分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%93%E5%89%8D%E4%BC%9A%E8%AF%9D%E4%B8%8B%EF%BC%8C%E6%9F%A5%E7%9C%8B%E5%85%B6%E5%AE%83%E8%BF%9E%E6%8E%A5%E7%9A%84-variables"><span class="nav-text">当前会话下，查看其它连接的 variables</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86"><span class="nav-text">权限管理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#remark"><span class="nav-text">remark</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+    &copy;&nbsp;<span>2017</span>&nbsp;-&nbsp;2025
+    
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">Ernesto Ignacio</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        Powered by&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;&&nbsp;Theme&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+        
+        <div class="deploy-info info-item">
+            
+            This site is deployed on <span class="tooltip" data-tooltip-content="GitHub Pages"><img src="/images/brands/github.png"></span>
+            
+        </div>
+    
+
+    
+        <div class="count-info info-item">
+            
+                <span class="count-item border-box word">
+                    <span class="item-type border-box">Total words</span>
+                    <span class="item-value border-box word">63.6k</span>
+                </span>
+            
+
+            
+                <span class="count-item border-box uv">
+                    <span class="item-type border-box">Unique Visitor</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+                <span class="count-item border-box pv">
+                    <span class="item-type border-box">Page View</span>
+                    <span class="item-value border-box pv" id="busuanzi_value_site_pv"></span>
+                </span>
+            
+        </div>
+    
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="post-tools-list border-box">
+        <!-- PC encrypt again -->
+        
+
+        <!-- PC TOC show toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <!-- toggle mode -->
+        
+
+        <!-- rss -->
+        
+            <li class="tools-item rss flex-center">
+                <a class="flex-center"
+                   href="/atom.xml"
+                   target="_blank"
+                >
+                    <i class="fas fa-rss"></i>
+                </a>
+            </li>
+        
+
+        <!-- to bottom -->
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+            <li class="tools-item toggle-show-toc-tablet flex-center">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="Search..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+        <div class="tablet-post-toc-mask">
+            <div class="tablet-post-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#01-MySQL%E7%AE%80%E4%BB%8B%E4%B8%8E%E5%89%8D%E6%99%AF"><span class="nav-text">01 MySQL简介与前景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#02-MySQL%E5%AE%89%E8%A3%85%E4%B8%8E%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4"><span class="nav-text">02 MySQL安装与基本命令</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E5%AE%89%E8%A3%85%E6%AD%A5%E9%AA%A4%E8%AF%B4%E6%98%8E"><span class="nav-text">MySQL安装步骤说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-5-7%E5%AE%89%E8%A3%85"><span class="nav-text">MySQL 5.7安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-5-6%E5%AE%89%E8%A3%85"><span class="nav-text">MySQL 5.6安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-5-7-%E4%B8%8E-MySQL-5-6-%E7%9A%84%E5%AE%89%E8%A3%85%E5%B7%AE%E5%BC%82"><span class="nav-text">MySQL 5.7 与 MySQL 5.6 的安装差异</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-text">常用命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BB%8B%E7%BB%8D"><span class="nav-text">默认数据库介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E8%B7%A8%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7"><span class="nav-text">MySQL跨版本升级</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-6%EF%BC%88%E6%88%965-x%EF%BC%89%E5%8D%87%E7%BA%A75-7"><span class="nav-text">5.6（或5.x）升级5.7</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#my-cnf"><span class="nav-text">my.cnf</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#03-MySQL%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%BF%9E%E6%8E%A5%E4%B8%8E%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86"><span class="nav-text">03 MySQL客户端连接与权限管理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql-best-configuration"><span class="nav-text">mysql best configuration</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E5%8F%AF%E4%BB%A5%E6%9C%89%E5%A4%9A%E4%B8%AA%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">MySQL可以有多个配置文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E7%9A%84%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0"><span class="nav-text">MySQL的配置参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bmysql%E7%9A%84%E5%8F%82%E6%95%B0%EF%BC%8C%E5%BD%93%E5%89%8D%E9%85%8D%E7%BD%AE%E7%9A%84%E5%80%BC"><span class="nav-text">查看mysql的参数，当前配置的值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E7%9A%84%E5%8F%82%E6%95%B0%E5%88%86%E7%B1%BB"><span class="nav-text">MySQL的参数分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%93%E5%89%8D%E4%BC%9A%E8%AF%9D%E4%B8%8B%EF%BC%8C%E6%9F%A5%E7%9C%8B%E5%85%B6%E5%AE%83%E8%BF%9E%E6%8E%A5%E7%9A%84-variables"><span class="nav-text">当前会话下，查看其它连接的 variables</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86"><span class="nav-text">权限管理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#remark"><span class="nav-text">remark</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        </div>
+    
+</main>
+
+
+
+
+
+<!-- common js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/libs/anime.min.js"></script>
+
+<!-- local search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/lazyload.min.js"></script>
+
+
+<div class="pjax">
+    <!-- home page -->
+    
+
+    <!-- post page -->
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/post/toc.min.js"></script>
+        
+
+        <!-- copyright-info -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/post/copyright-info.min.js"></script>
+        
+
+        <!-- share -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/post/share.min.js"></script>
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+    
+<script src="//cdn.jsdelivr.net/npm/mermaid@7.1.2/dist/mermaid.min.js"></script>
+
+    <script data-pjax>
+      if (window.mermaid) {
+        mermaid.init()
+      }
+    </script>
+
+
+
+
+
+
+<!-- pjax -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/libs/pjax.min.js"></script>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart()
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd()
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'))
+            KEEP.initExecute()
+        });
+    });
+</script>
+
+
+
+
+</body>
+</html>

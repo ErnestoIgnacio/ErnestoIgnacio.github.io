@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Ernesto Ignacio&#39;s Blog">
+    <meta name="author" content="Ernesto Ignacio">
+    
+    <title>
+        
+            《Tony Bai · Go 语言第一课》Study Notes |
+        
+        Ernesto Ignacio&#39;s Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+        <link rel="shortcut icon" href="https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/avatar.45ve77572.svg">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/brands.min.css">
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"ernestoignacio.github.io","root":"/","language":"en","path":"search.json"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#b2bec3","title":"Ernesto Ignacio's Blog","author":"Ernesto Ignacio","avatar":"https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/avatar.45ve77572.svg","logo":"https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/avatar.45ve77572.svg","favicon":"https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/avatar.45ve77572.svg","mode":"light"},"menu":{"home":"/","archives":"/archives"},"first_screen":{"enable":true,"background_img":"https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/bg.6pnp58bk7c.webp","background_img_dark":"https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/bg.6pnp58bk7c.webp","description":"Stay Hungry Stay Foolish","hitokoto":false},"social_contact":{"enable":true,"links":{"github":"https://github.com/ErnestoIgnacio","weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"x":null,"facebook":null,"email":"ernst.ignis@gmail.com"}},"scroll":{"progress_bar":true,"percent":true,"hide_header":true},"home":{"announcement":null,"category":true,"tag":true,"post_datetime":"updated","post_datetime_format":"YYYY-MM-DD"},"post":{"author_badge":{"enable":false,"level_badge":true,"custom_badge":["One","Two","Three"]},"word_count":{"wordcount":true,"min2read":true},"datetime_format":"YYYY-MM-DD","copyright_info":true,"share":true,"reward":{"enable":false,"img_link":null,"text":null,"icon":null},"img_align":"center","created_datetime_icon":"fa-solid fa-calendar-plus","updated_datetime_icon":"fa-solid fa-file-pen"},"code_block":{"tools":{"enable":true,"style":"mac"},"highlight_theme":"obsidian"},"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":true,"page_pv":true}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.39"},"waline":{"server_url":null,"reaction":false,"version":"3.3.2"},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":true},"lazyload":{"enable":true},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":true},"footer":{"since":2017,"word_count":true,"site_deploy":{"enable":true,"provider":"github","url":null},"record":{"enable":false,"list":[{"code":null,"link":null}]}},"inject":{"enable":false,"css":[null],"js":[null]},"mermaid":{"enable":true,"version":"10.5.0"},"root":"","source_data":{},"version":"4.2.5"}
+    KEEP.language_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"}
+    KEEP.language_code_block = {"copy":"Copy code","copied":"Copied","fold":"Fold code block","folded":"Folded"}
+    KEEP.language_copy_copyright = {"copy":"Copy copyright info","copied":"Copied","title":"Original post title","author":"Original post author","link":"Original post link"}
+  </script>
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Ernesto Ignacio's Blog" type="application/atom+xml">
+</head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <i class="pjax-progress-icon fas fa-circle-notch fa-spin"></i>
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left flex-start border-box">
+            
+                <a class="logo-image border-box" href="/">
+                    <img src="https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/avatar.45ve77572.svg">
+                </a>
+            
+            <a class="site-name border-box" href="/">
+               Ernesto Ignacio&#39;s Blog
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc border-box">
+                <ul class="menu-list border-box">
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/">
+                                
+                                HOME
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/archives">
+                                
+                                ARCHIVES
+                                
+                            </a>
+                            
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="menu-text-color fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile border-box flex-start">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list border-box">
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/">
+                            
+                            HOME
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/archives">
+                            
+                            ARCHIVES
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        《Tony Bai · Go 语言第一课》Study Notes
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/avatar.45ve77572.svg">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">Ernesto Ignacio</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2025-07-05</span>
+            </span>
+
+            
+                <span class="meta-info-item post-update-date">
+                    <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                    <span class="datetime" data-updated="Thu Oct 09 2025 08:38:49 GMT-0500">2025-10-09</span>
+                </span>
+            
+        
+
+        
+            <span class="meta-info-item post-category border-box"><i class="icon fas fa-folder"></i>&nbsp;
+                <ul class="post-category-ul">
+                    
+                            <li class="category-item"><a href="/categories/Go/">Go</a></li>
+                        
+                    
+                </ul>
+            </span>
+        
+
+        
+            <span class="post-tag meta-info-item border-box">
+                <ul class="post-tag-ul">
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/Go/">Go</a></li>
+                        
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/Study-Notes/">Study-Notes</a></li>
+                        
+                    
+                </ul>
+            </span>
+        
+
+        
+        
+            <span class="meta-info-item post-wordcount">
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>5.5k Words</span>
+            </span>
+        
+        
+            <span class="meta-info-item post-min2read">
+                <i class="icon fas fa-clock"></i>&nbsp;<span>20 Mins</span>
+            </span>
+        
+        
+            <span class="meta-info-item post-pv">
+                <i class="icon fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body ">
+                    
+
+                    
+                         <p>极客时间专栏课程<a class="link"   target="_blank" rel="noopener" href="https://time.geekbang.com/column/intro/100093501?utm_campaign=geektime_search&utm_content=geektime_search&utm_medium=geektime_search&utm_source=geektime_search&utm_term=geektime_search" >《Tony Bai · Go 语言第一课》<i class="fas fa-external-link-alt"></i></a>学习笔记</p>
+<span id="more"></span>
+<br/>
+
+<h1 id="开篇词-1讲"><a href="#开篇词-1讲" class="headerlink" title="开篇词 (1讲)"></a>开篇词 (1讲)</h1><h2 id="开篇词｜这样入门Go，才能少走弯路"><a href="#开篇词｜这样入门Go，才能少走弯路" class="headerlink" title="开篇词｜这样入门Go，才能少走弯路"></a>开篇词｜这样入门Go，才能少走弯路</h2><h3 id="学习Go的3大理由"><a href="#学习Go的3大理由" class="headerlink" title="学习Go的3大理由"></a>学习Go的3大理由</h3><ul>
+<li>简单、上手快、对初学者友好<ul>
+<li>一直保持简单，Go 新增的语言特性也同样是“屈指可数”</li>
+</ul>
+</li>
+<li>生产力与性能最佳结合<ul>
+<li>Go 已经成为了云基础架构语言，在云原生基础设施、中间件与云服务领域大放异彩</li>
+</ul>
+</li>
+<li>快乐有“钱景”<ul>
+<li>简单的语法</li>
+<li>得心应手的工具链</li>
+<li>丰富和健壮的标准库</li>
+<li>生产力与性能的完美结合</li>
+<li>免除内存管理的心智负担</li>
+<li>对并发设计的原生支持</li>
+<li>Go 语言平均薪水位于头部位置</li>
+</ul>
+</li>
+</ul>
+<br/>
+
+<h3 id="学习Go时候的弯路"><a href="#学习Go时候的弯路" class="headerlink" title="学习Go时候的弯路"></a>学习Go时候的弯路</h3><ul>
+<li>最开始缺乏对这门语言的认真评估，盲目投入，从开始到放弃</li>
+<li>不动手</li>
+<li>用其他编程语言思维编写 Go 代码（形神皆丧，无法掌握语言真谛）</li>
+<li>没有建立起“设计意识”（要培养自己选择适当的语言元素构造程序骨架的能力，也就是“设计意识”。尤其是要弄清楚不同语言元素所在的层次）</li>
+</ul>
+<br/>
+
+<h3 id="如何学好Go"><a href="#如何学好Go" class="headerlink" title="*如何学好Go"></a>*如何学好Go</h3><ul>
+<li>前置篇，“心定”建立认同感<ul>
+<li>了解 Go 的前世今生和设计哲学</li>
+<li>“心定”就是为了建立对 Go 语言的认同感：认同感是全方位的，包括对 Go 语言的设计目标、设计哲学、演化思路，还有社区行为规范等等（“心定”，才能避免出现“Hello-and-Bye”的情况）</li>
+</ul>
+</li>
+<li>入门篇，“手勤”多动手实践<ul>
+<li>熟悉实用 Go 程序都有哪些语法元素和结构</li>
+<li>多动手、多实践</li>
+</ul>
+</li>
+<li>基础篇，“脑勤”多理解，夯实基础<ul>
+<li>理解变量、常量等基本概念，到数据类型，再到广义的算法</li>
+<li>用 Go 建立对现实世界的抽象认知，也能明白 Go 程序运行的基本逻辑</li>
+</ul>
+</li>
+<li>核心篇，“脑勤 +”建立自己的 Go 应用设计意识<ul>
+<li>理解Go核心语法元素：接口类型与 goroutine 等并发原语类型（Go 应用程序的骨架）</li>
+<li>建立自己的 Go 应用“设计意识”</li>
+</ul>
+</li>
+<li>实战篇，攻克 Go 开发的“最后一公里”<ul>
+<li>实战：用这些 Go 语言的特性来解决实际问题</li>
+</ul>
+</li>
+</ul>
+<img src='https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/image.icef3yhei.webp' width='70%' />
+
+<br/>
+
+<br/>
+
+<br/>
+
+<h1 id="前置篇：心定之旅-2讲"><a href="#前置篇：心定之旅-2讲" class="headerlink" title="前置篇：心定之旅 (2讲)"></a>前置篇：心定之旅 (2讲)</h1><h2 id="01｜前世今生：你不得不了解的Go的历史和现状"><a href="#01｜前世今生：你不得不了解的Go的历史和现状" class="headerlink" title="01｜前世今生：你不得不了解的Go的历史和现状"></a>01｜前世今生：你不得不了解的Go的历史和现状</h2><blockquote>
+<p><strong>开始接触一门新语言（技术）的时候，一定要去了解它的历史和现状，这样才能建立整体认知，了解它的未来走向。也建立“安全感”，相信它能够带来足够的价值与收益，更坚定的学习下去</strong></p>
+</blockquote>
+<h3 id="Go-语言是怎样诞生的？"><a href="#Go-语言是怎样诞生的？" class="headerlink" title="Go 语言是怎样诞生的？"></a>Go 语言是怎样诞生的？</h3><ul>
+<li>Go 语言的三位创始人<ul>
+<li>肯·汤普森（Ken Thompson）（图灵奖获得者、C 语法联合发明人、Unix 之父）</li>
+<li>罗伯·派克（Rob Pike）（Plan 9 操作系统领导者、UTF-8 编码的最初设计者）</li>
+<li>罗伯特·格瑞史莫（Robert Griesemer）（Java 的 HotSpot 虚拟机和 Chrome 浏览器的 JavaScript V8 引擎的设计者之一）</li>
+</ul>
+</li>
+<li>Go语言诞生背景<ul>
+<li>2007 年 9 月 20 日下午的一次普通讨论</li>
+<li>当时的谷歌内部主要使用 C++ 语言构建各种系统，但 C++ 的巨大复杂性、编译构建速度慢以及在编写服务端程序时对并发支持的不足</li>
+</ul>
+</li>
+<li>Go语言设计思路<ul>
+<li>在 C 语言的基础上，修正一些明显的缺陷，删除一些被诟病较多的特性，增加一些缺失的功能</li>
+</ul>
+</li>
+<li>2021 年。经过了十余年的打磨与优化，如今的 Go 语言已经逐渐成为了云计算时代基础设施的编程语言</li>
+</ul>
+<br/>
+
+<h3 id="思考题："><a href="#思考题：" class="headerlink" title="思考题："></a>思考题：</h3><blockquote>
+<p>相较于传统的静态编译型编程语言（如 C、C++），Go 做出了哪些改进？</p>
+</blockquote>
+<ul>
+<li><strong>简化语法、减少复杂性</strong><ul>
+<li>Go 的语法风格接近 C，但砍掉了很多 C++ 里的“复杂特性”，例如继承、多重继承、模板（泛型只在后期引入），以 <strong>组合代替继承</strong>，避免“过度设计”</li>
+<li>没有头文件（.h&#x2F;.cpp分离），一个 .go 文件就能包含可见的结构与函数定义，极大简化编译依赖</li>
+<li>严格的代码风格（比如 <code>gofmt</code>），避免团队协作中风格混乱</li>
+</ul>
+</li>
+<li><strong>内置并发支持</strong><ul>
+<li>C&#x2F;C++ 的多线程需要 pthread 或第三方库，且容易出错</li>
+<li>Go 原生就设计了 <strong>goroutine</strong>（轻量线程）、<strong>channel</strong>（通信机制），使并发编程更易读、更安全，且跨平台无痛。</li>
+</ul>
+</li>
+<li><strong>自动垃圾回收</strong><ul>
+<li>C&#x2F;C++ 程序员必须手动管理内存，容易造成内存泄漏</li>
+<li>Go 自带高效垃圾回收器，程序员只需要关注“什么时候分配”，不必关心“什么时候释放”</li>
+</ul>
+</li>
+<li><strong>快速编译，单文件可执行</strong><ul>
+<li>Go 保留静态编译的优点（输出一个可移植的二进制文件）</li>
+<li>同时极大提升了编译速度，远超 C&#x2F;C++ 链接的复杂性，Go 编译器往往几秒就完成</li>
+<li>编译结果就是一个无需额外依赖的二进制包，便于跨平台部署</li>
+</ul>
+</li>
+<li><strong>内置强大标准库</strong><ul>
+<li>Go 标准库极其丰富：网络、并发、加密、Web，几乎一应俱全</li>
+<li>在 C&#x2F;C++ 中通常要依赖第三方库或系统库</li>
+</ul>
+</li>
+<li><strong>包管理更现代</strong><ul>
+<li>C&#x2F;C++ 的包管理比较混乱（Makefile&#x2F;CMake&#x2F;各种包管理器）</li>
+<li>Go 从 1.11 开始内置 <code>go mod</code>，模块化管理清晰且简洁</li>
+</ul>
+</li>
+<li><strong>更现代化的错误处理</strong><ul>
+<li>Go 的 <code>error</code> 接口替代了传统的 errno 或异常机制</li>
+<li>明确返回错误值，避免隐藏式异常</li>
+<li>使得代码更容易读懂和调试</li>
+</ul>
+</li>
+<li><strong>跨平台和云原生友好</strong><ul>
+<li>C&#x2F;C++ 做跨平台需要针对不同架构编译、处理很多细节</li>
+<li>Go 出生就支持跨平台编译，且对容器&#x2F;微服务非常友好，部署一个可执行文件就能跑</li>
+</ul>
+</li>
+</ul>
+<br/>
+
+<br/>
+
+<h2 id="02｜拒绝“Hello-and-Bye”：Go语言的设计哲学是怎么一回事？"><a href="#02｜拒绝“Hello-and-Bye”：Go语言的设计哲学是怎么一回事？" class="headerlink" title="02｜拒绝“Hello and Bye”：Go语言的设计哲学是怎么一回事？"></a>02｜拒绝“Hello and Bye”：Go语言的设计哲学是怎么一回事？</h2><h3 id="简单"><a href="#简单" class="headerlink" title="简单"></a>简单</h3><ul>
+<li>Go 语言的设计者们在语言设计之初，就拒绝了走语言特性融合的道路，选择了“做减法”并致力于打造一门简单的编程语言</li>
+<li>简单意味着可以使用更少的代码实现相同的功能；简单意味着代码具有更好的可读性，而可读性好的代码通常意味着更好的可维护性以及可靠性。</li>
+<li>都意味着对生产效率提升的极大促进，我们可以认为简单的设计哲学是 Go 生产力的源泉。</li>
+</ul>
+<br/>
+
+<h3 id="显式"><a href="#显式" class="headerlink" title="显式"></a>显式</h3><ul>
+<li>Go 不允许不同类型的整型变量进行混合计算，它同样也不会对其进行隐式的自动转换。</li>
+<li>Go 希望开发人员明确知道自己在做什么</li>
+<li>Go 设计者所崇尚的显式哲学还直接决定了 Go 语言错误处理的形态：Go 语言采用了显式的基于值比较的错误处理方案</li>
+</ul>
+<br/>
+
+<h3 id="组合"><a href="#组合" class="headerlink" title="组合"></a>组合</h3><ul>
+<li>组合原则的应用实质上是塑造了 Go 程序的骨架结构。类型嵌入为类型提供了垂直扩展能力，而接口是水平组合的关键</li>
+</ul>
+<br/>
+
+<h3 id="并发"><a href="#并发" class="headerlink" title="并发"></a>并发</h3><ul>
+<li>面向多核、原生支持并发</li>
+<li>Go 放弃了传统的基于操作系统线程的并发模型，而采用了用户层轻量级线程，Go 将之称为 goroutine</li>
+<li>在语言层面内置了辅助并发设计的原语：channel 和 select。开发者可以通过语言内置的 channel 传递消息或实现同步，并通过 select 实现多路 channel 的并发控制</li>
+</ul>
+<br/>
+
+<h3 id="面向工程"><a href="#面向工程" class="headerlink" title="面向工程"></a>面向工程</h3><ul>
+<li>将解决工程问题作为 Go 的设计原则之一去考虑</li>
+</ul>
+<br/>
+
+<br/>
+
+<br/>
+
+<h1 id="入门篇：勤加练手-7讲"><a href="#入门篇：勤加练手-7讲" class="headerlink" title="入门篇：勤加练手 (7讲)"></a>入门篇：勤加练手 (7讲)</h1><h2 id="03｜配好环境：选择一种最适合你的Go安装方法"><a href="#03｜配好环境：选择一种最适合你的Go安装方法" class="headerlink" title="03｜配好环境：选择一种最适合你的Go安装方法"></a>03｜配好环境：选择一种最适合你的Go安装方法</h2><ul>
+<li>配置Go</li>
+</ul>
+<img src='https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/image.8hgs2ok8l3.webp' width='70%' />
+
+<br/>
+
+<br/>
+
+<h2 id="04｜初窥门径：一个Go程序的结构是怎样的？"><a href="#04｜初窥门径：一个Go程序的结构是怎样的？" class="headerlink" title="04｜初窥门径：一个Go程序的结构是怎样的？"></a>04｜初窥门径：一个Go程序的结构是怎样的？</h2><ul>
+<li>当运行一个可执行的 Go 程序的时候，所有的代码都会从这个main入口函数开始运行</li>
+<li>标准 Go 代码风格使用 Tab 而不是空格来实现缩进的</li>
+<li>import “fmt” 一行中“fmt”代表的是包的导入路径（Import），它表示的是标准库下的 fmt 目录</li>
+<li>fmt.Println 函数调用一行中的“fmt”代表的则是包名。</li>
+<li>Go 源码文件本身采用的是 Unicode 字符集，而且用的是 UTF-8 标准的字符编码方式，这与编译后的程序所运行的环境所使用的字符集和字符编码方式是一致的。</li>
+<li>Go 包是 Go 语言的基本组成单元。一个 Go 程序就是一组包的集合，所有 Go 代码都位于包中；</li>
+<li>Go 源码可以导入其他 Go 包，并使用其中的导出语法元素，包括类型、变量、函数、方法等，而且，main 函数是整个 Go 应用的入口函数；</li>
+<li>Go 源码需要先编译，再分发和运行。如果是单 Go 源文件的情况，我们可以直接使用 go build 命令 +Go 源文件名的方式编译。不过，对于复杂的 Go 项目，我们需要在 Go Module 的帮助下完成项目的构建。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> run test.<span class="keyword">go</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">go</span> build test.<span class="keyword">go</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">go</span> mod init test</span><br><span class="line"></span><br><span class="line"><span class="keyword">go</span> mod tidy</span><br><span class="line"></span><br><span class="line"><span class="keyword">go</span> get xxx</span><br></pre></td></tr></table></figure>
+
+<br/>
+
+<br/>
+
+<h2 id="05｜标准先行：Go项目的布局标准是什么？"><a href="#05｜标准先行：Go项目的布局标准是什么？" class="headerlink" title="05｜标准先行：Go项目的布局标准是什么？"></a>05｜标准先行：Go项目的布局标准是什么？</h2><blockquote>
+<p>生产环境中，go项目的项目布局是复杂的，go开发者必须熟悉go的项目布局</p>
+</blockquote>
+<h3 id="Go-语言“创世项目”结构的演化"><a href="#Go-语言“创世项目”结构的演化" class="headerlink" title="Go 语言“创世项目”结构的演化"></a>Go 语言“创世项目”结构的演化</h3><ul>
+<li><strong>Go 1.3 版本</strong><ul>
+<li>（1）以 all.bash 为代表的代码构建的脚本源文件放在了 src 下面的顶层目录下</li>
+<li>（2）src 下的二级目录 cmd 下面存放着 Go 相关可执行文件的相关目录，其中每个子目录都是一个 Go 工具链命令或子命令对应的可执行文件</li>
+<li>（3） src 下的二级目录 pkg 下面存放着运行时实现、标准库包实现，这些包既可以被上面 cmd 下各程序所导入，也可以被 Go 语言项目之外的 Go 程序依赖并导入</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$</span><span class="language-bash"><span class="built_in">cd</span> go // 进入Go语言项目根目录</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">git checkout go1.3 // 切换到go 1.3版本</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">tree -LF 1 ./src // 查看src目录下的结构布局</span></span><br><span class="line">./src</span><br><span class="line">├── all.bash*</span><br><span class="line">├── clean.bash*</span><br><span class="line">├── cmd/</span><br><span class="line">├── make.bash*</span><br><span class="line">├── Make.dist</span><br><span class="line">├── pkg/</span><br><span class="line">├── race.bash*</span><br><span class="line">├── run.bash*</span><br><span class="line">... ...</span><br><span class="line">└── sudo.bash*</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>演进一：Go 1.4 版本删除 pkg 这一中间层目录并引入 internal 目录</strong><ul>
+<li>删除了 Go 源码树中“src&#x2F;pkg&#x2F;xxx”中 pkg 这一层级目录而直接使用 src&#x2F;xxx（好处：Go 语言项目的源码树深度减少一层，更便于 Go 开发者阅读和探索 Go 项目源码）</li>
+<li>Go 1.4 引入 internal 包机制，增加了 internal 目录；根据 internal 机制的定义，一个 Go 项目里的 internal 目录下的 Go 包，只可以被本项目内部的包导入。项目外部是无法导入这个 internal 目录下面的包的（好处：让一个 Go 项目中 Go 包的分类与用途变得更加清晰）</li>
+</ul>
+</li>
+<li><strong>演进二：Go1.6 版本增加 vendor 目录</strong><ul>
+<li>Go 源码的编译可以不在 GOPATH 环境变量下面搜索依赖包的路径，而在 vendor 目录下查找对应的依赖包（解决 Go 包依赖版本管理的问题）</li>
+<li>Go 1.6 版本中增加了 vendor 目录以支持 vendor 构建（让 Go 项目第一次具有了可重现构建（Reproducible Build）的能力）</li>
+</ul>
+</li>
+<li><strong>演进三：Go 1.13 版本引入 go.mod 和 go.sum</strong><ul>
+<li>引入了 Go Module 构建机制：在项目引入 go.mod 以及在 go.mod 中明确项目所依赖的第三方包和版本，项目的构建就将摆脱 GOPATH 的束缚，实现精准的可重现构建（为了解决 Go 包依赖版本管理的问题，Go 语言项目自身所依赖的包在 go.mod 中都有对应的信息，而原本这些依赖包是缓存在 vendor 目录下的）</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>这三次演进主要体现在简化结构布局，以及优化包依赖管理方面，起到了改善 Go 开发体验的作用。</p>
+<p>Go 创世项目的源码布局以及演化对 Go 社区项目的布局具有重要的启发意义，以至于在多年的 Go 社区实践后，Go 社区逐渐形成了公认的 Go 项目的典型结构布局。</p>
+</blockquote>
+<br/>
+
+<h3 id="现在的-Go-项目的典型结构布局是怎样的？"><a href="#现在的-Go-项目的典型结构布局是怎样的？" class="headerlink" title="现在的 Go 项目的典型结构布局是怎样的？"></a>现在的 Go 项目的典型结构布局是怎样的？</h3><blockquote>
+<p>一个 Go 项目通常分为可执行程序项目和库项目</p>
+</blockquote>
+<h4 id="Go-可执行程序项目的典型结构布局"><a href="#Go-可执行程序项目的典型结构布局" class="headerlink" title="Go 可执行程序项目的典型结构布局"></a>Go 可执行程序项目的典型结构布局</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$</span><span class="language-bash">tree -F exe-layout</span> </span><br><span class="line">exe-layout</span><br><span class="line">├── cmd/</span><br><span class="line">│   ├── app1/</span><br><span class="line">│   │   └── main.go</span><br><span class="line">│   └── app2/</span><br><span class="line">│       └── main.go</span><br><span class="line">├── go.mod</span><br><span class="line">├── go.sum</span><br><span class="line">├── internal/</span><br><span class="line">│   ├── pkga/</span><br><span class="line">│   │   └── pkg_a.go</span><br><span class="line">│   └── pkgb/</span><br><span class="line">│       └── pkg_b.go</span><br><span class="line">├── pkg1/</span><br><span class="line">│   └── pkg1.go</span><br><span class="line">├── pkg2/</span><br><span class="line">│   └── pkg2.go</span><br><span class="line">└── vendor/</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>cmd 目录<ul>
+<li>存放项目要编译构建的可执行文件对应的 main 包的源文件</li>
+<li>项目中有多个可执行文件需要构建，每个可执行文件的 main 包单独放在一个子目录中</li>
+<li>通常来说，main 包应该很简洁。我们在 main 包中会做一些命令行参数解析、资源初始化、日志设施初始化、数据库连接初始化等工作，之后就会将程序的执行权限交给更高级的执行控制对象。</li>
+</ul>
+</li>
+<li>pkgN 目录<ul>
+<li>存放项目自身要使用、同样也是可执行文件对应 main 包所要依赖的库文件，同时这些目录下的包还可以被外部项目引用</li>
+</ul>
+</li>
+<li>go.mod 和 go.sum<ul>
+<li>Go 语言包依赖管理使用的配置文件</li>
+</ul>
+</li>
+<li>vendor 目录<ul>
+<li>可以将 vendor 目录视为一个可选目录，Go Module 本身就支持可再现构建，而无需使用 vendor</li>
+</ul>
+</li>
+</ul>
+<h4 id="Go-库项目的典型结构布局"><a href="#Go-库项目的典型结构布局" class="headerlink" title="Go 库项目的典型结构布局"></a>Go 库项目的典型结构布局</h4><blockquote>
+<p>不推荐在项目中放置 vendor 目录去缓存库自身的第三方依赖，库项目仅通过 go.mod 文件明确表述出该项目依赖的 module 或包以及版本要求就可以了</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$</span><span class="language-bash">tree -F lib-layout</span> </span><br><span class="line">lib-layout</span><br><span class="line">├── go.mod</span><br><span class="line">├── internal/</span><br><span class="line">│   ├── pkga/</span><br><span class="line">│   │   └── pkg_a.go</span><br><span class="line">│   └── pkgb/</span><br><span class="line">│       └── pkg_b.go</span><br><span class="line">├── pkg1/</span><br><span class="line">│   └── pkg1.go</span><br><span class="line">└── pkg2/</span><br><span class="line">    └── pkg2.go</span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>注意早期 Go 可执行程序项目的典型布局</p>
+<p>原本放在项目顶层目录下的 pkg1 和 pkg2 公共包被统一聚合到 pkg 目录下了</p>
+</blockquote>
+<br/>
+
+<br/>
+
+<h2 id="06｜构建模式：Go是怎么解决包依赖管理问题的？"><a href="#06｜构建模式：Go是怎么解决包依赖管理问题的？" class="headerlink" title="06｜构建模式：Go是怎么解决包依赖管理问题的？"></a>06｜构建模式：Go是怎么解决包依赖管理问题的？</h2><h3 id="Go-构建模式是怎么演化的？"><a href="#Go-构建模式是怎么演化的？" class="headerlink" title="Go 构建模式是怎么演化的？"></a>Go 构建模式是怎么演化的？</h3><ul>
+<li><strong>什么是Go建构</strong><ul>
+<li>Go 程序由 Go 包组合而成的，<strong>Go 程序的构建过程就是确定包版本、编译包以及将编译后得到的目标文件链接在一起的过程</strong></li>
+</ul>
+</li>
+<li>Go 语言的构建模式历经了三个迭代和演化过程<ul>
+<li>GOPATH</li>
+<li>1.5 版本的 Vendor 机制</li>
+<li>现在的 Go Module</li>
+</ul>
+</li>
+</ul>
+<h4 id="GOPATH"><a href="#GOPATH" class="headerlink" title="GOPATH"></a>GOPATH</h4><ul>
+<li><p>Go 语言在首次开源时，就内置了一种名为 GOPATH 的构建模式</p>
+</li>
+<li><p>Go 编译器可以在本地 GOPATH 环境变量配置的路径下，搜寻 Go 程序依赖的第三方包。如果存在，就使用这个本地包进行编译；如果不存在，就会报编译错误。</p>
+</li>
+<li><p>Go 编译器在 GOPATH 构建模式下，究竟怎么在 GOPATH 配置的路径下搜寻第三方依赖包呢？</p>
+<blockquote>
+<p><code>export GOPATH=/usr/local/goprojects:/home/tonybai/go</code></p>
+<p>在 GOPATH 构建模式下，Go 编译器在编译 Go 程序时，就会在下面两个路径下搜索第三方依赖包是否存在：</p>
+<p><code>/usr/local/goprojects/src/github.com/user/repo /home/tonybai/go/src/github.com/user/repo</code></p>
+<p>没有显式设置 GOPATH 环境变量，Go 会将 GOPATH 设置为默认值，不同操作系统下默认值的路径不同，在 macOS 或 Linux 上，它的默认值是 $HOME&#x2F;go。</p>
+</blockquote>
+</li>
+<li><p>通过 go get 命令将本地缺失的第三方依赖包下载到本地：<code>go get github.com/sirupsen/logrus</code></p>
+</li>
+<li><p>go get 命令，不仅能将 logrus 包下载到 GOPATH 环境变量配置的目录下，它还会检查 logrus 的依赖包在本地是否存在，如果不存在，go get 也会一并将它们下载到本地。</p>
+</li>
+<li><p>go get 下载的包只是那个时刻各个依赖包的最新主线版本</p>
+<blockquote>
+<p>会给后续 Go 程序的构建带来一些问题。比如，依赖包持续演进，可能会导致不同开发者在不同时间获取和编译同一个 Go 包时，得到不同的结果，也就是不能保证可重现的构建（Reproduceable Build）。又比如，如果依赖包引入了不兼容代码，程序将无法通过编译。</p>
+</blockquote>
+</li>
+<li><p><strong>在 GOPATH 构建模式下，Go 编译器实质上并没有关注 Go 项目所依赖的第三方包的版本</strong></p>
+</li>
+</ul>
+<h4 id="vendor-机制"><a href="#vendor-机制" class="headerlink" title="vendor 机制"></a>vendor 机制</h4><ul>
+<li><strong>vendor 机制本质上就是在 Go 项目的某个特定目录下，将项目的所有依赖包缓存起来，这个特定目录名就是 vendor</strong></li>
+<li>Go 编译器会优先感知和使用 vendor 目录下缓存的第三方包版本，而不是 GOPATH 环境变量所配置的路径下的第三方包版本。这样，无论第三方依赖包自己如何变化，无论 GOPATH 环境变量所配置的路径下的第三方包是否存在、版本是什么，都不会影响到 Go 程序的构建。</li>
+<li>如果你将 vendor 目录和项目源码一样提交到代码仓库，那么其他开发者下载你的项目后，就可以实现可重现的构建。因此，如果使用 vendor 机制管理第三方依赖包，最佳实践就是将 vendor 一并提交到代码仓库中。</li>
+<li>在添加完 vendor 后，我们重新编译 main.go，这个时候 Go 编译器就会在 vendor 目录下搜索程序依赖的 logrus 包以及后者依赖的 golang.org&#x2F;x&#x2F;sys&#x2F;unix 包了。</li>
+<li>要想开启 vendor 机制，你的 Go 项目必须位于 GOPATH 环境变量配置的某个路径的 src 目录下面。如果不满足这一路径要求，那么 Go 编译器是不会理会 Go 项目目录下的 vendor 目录的。</li>
+<li>vendor 机制虽然一定程度解决了 Go 程序可重现构建的问题，但对开发者来说，它的体验却不那么好。<ul>
+<li>Go 项目必须放在 GOPATH 环境变量配置的路径下，庞大的 vendor 目录需要提交到代码仓库，不仅占用代码仓库空间，减慢仓库下载和更新的速度，而且还会干扰代码评审，对实施代码统计等开发者效能工具也有比较大影响。</li>
+<li>还需要手工管理 vendor 下面的 Go 依赖包，包括项目依赖包的分析、版本的记录、依赖包获取和存放，等等，最让开发者头疼的就是这一点。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>为了解决这个问题，Go 核心团队与社区将 Go 构建的重点转移到如何解决包依赖管理上。Go 社区先后开发了诸如 gb、glide、dep 等工具，来帮助 Go 开发者对 vendor 下的第三方包进行自动依赖分析和管理，但这些工具也都有自身的问题。</p>
+<p>Go 核心团队基于社区实践的经验和教训，推出了 Go 官方的解决方案：Go Module。</p>
+</blockquote>
+<h4 id="Go-Module"><a href="#Go-Module" class="headerlink" title="Go Module"></a>Go Module</h4><ul>
+<li>从 Go 1.11 版本开始，除了 GOPATH 构建模式外，Go 又增加了一种 Go Module 构建模式。</li>
+<li>一个 Go Module 是一个 Go 包的集合。module 是有版本的，所以 module 下的包也就有了版本属性。这个 module 与这些包会组成一个独立的版本单元，它们一起打版本、发布和分发。</li>
+<li>在 Go Module 模式下，通常一个代码仓库对应一个 Go Module。一个 Go Module 的顶层目录下会放置一个 go.mod 文件，每个 go.mod 文件会定义唯一一个 module，也就是说 Go Module 与 go.mod 是一一对应的。</li>
+<li>go.mod 文件所在的顶层目录也被称为 module 的根目录，module 根目录以及它子目录下的所有 Go 包均归属于这个 Go Module，这个 module 也被称为 main module。</li>
+</ul>
+<br/>
+
+<br/>
+
+<h2 id="07｜构建模式：Go-Module的6类常规操作"><a href="#07｜构建模式：Go-Module的6类常规操作" class="headerlink" title="07｜构建模式：Go Module的6类常规操作"></a>07｜构建模式：Go Module的6类常规操作</h2><blockquote>
+<p>维护 Go Module 无非就是对 Go Module 依赖包的管理</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">go get xxx</span><br><span class="line"></span><br><span class="line">go mod tidy</span><br><span class="line"></span><br><span class="line">go list -m -versions github.com/sirupsen/logrus</span><br><span class="line"></span><br><span class="line">go mod edit -require=github.com/sirupsen/logrus@v1.7.0</span><br><span class="line">go mod tidy</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">列出当前 module 的所有依赖</span></span><br><span class="line">go list -m all</span><br></pre></td></tr></table></figure>
+
+<br/>
+
+<br/>
+
+<h2 id="08｜入口函数与包初始化：搞清Go程序的执行次序"><a href="#08｜入口函数与包初始化：搞清Go程序的执行次序" class="headerlink" title="08｜入口函数与包初始化：搞清Go程序的执行次序"></a>08｜入口函数与包初始化：搞清Go程序的执行次序</h2><h3 id="main-main-函数：Go-应用的入口函数"><a href="#main-main-函数：Go-应用的入口函数" class="headerlink" title="main.main 函数：Go 应用的入口函数"></a>main.main 函数：Go 应用的入口函数</h3><ul>
+<li>main 包中的 main 函数，所有 Go 可执行程序的用户层执行逻辑的入口函数</li>
+<li>Go 语言要求：可执行程序的 main 包必须定义 main 函数，否则 Go 编译器会报错（在启动了多个 Goroutine（Go 语言的轻量级用户线程，后面我们会详细讲解）的 Go 应用中，main.main 函数将在 Go 应用的主 Goroutine 中执行）</li>
+<li>main 包的 main 函数，它虽然是用户层逻辑的入口函数，但它却不一定是用户层第一个被执行的函数。</li>
+</ul>
+<br/>
+
+<h3 id="init-函数：Go-包的初始化函数"><a href="#init-函数：Go-包的初始化函数" class="headerlink" title="init 函数：Go 包的初始化函数"></a>init 函数：Go 包的初始化函数</h3><ul>
+<li>Go 语言还有一个特殊函数，它就是用于进行包初始化的 init 函数</li>
+<li>如果 main 包依赖的包中定义了 init 函数，或者是 main 包自身定义了 init 函数，那么 Go 程序在这个包初始化的时候，就会自动调用它的 init 函数，因此这些 init 函数的执行就都会发生在 main 函数之前。</li>
+<li>在 Go 程序中我们不能手工显式地调用 init，否则就会收到编译错误</li>
+<li>Go 包可以拥有不止一个 init 函数，每个组成 Go 包的 Go 源文件中，也可以定义多个 init 函数</li>
+</ul>
+<br/>
+
+<br/>
+
+<br/>
+
+<h1 id="第X章"><a href="#第X章" class="headerlink" title="第X章"></a>第X章</h1><br/>
+
+<br/>
+
+<br/>
+
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><br/>
+
+<br/>
+
+<br/>
+
+<h1 id="remark"><a href="#remark" class="headerlink" title="remark"></a>remark</h1><blockquote>
+<ol>
+<li>GO命令编程还需要熟悉</li>
+</ol>
+</blockquote>
+<img src='' width='70%' />
+
+
+
+
+                    
+                </div>
+
+                
+                        
+<div class="post-copyright-info-container border-box">
+    <div class="copyright-info-content border-box">
+        <div class="copyright-info-top border-box">
+            <div class="copyright-post-title border-box text-ellipsis">
+                《Tony Bai · Go 语言第一课》Study Notes
+            </div>
+
+            <div class="copyright-post-link border-box text-ellipsis">
+                2025/《Tony-Bai-·-Go-语言第一课》Study-Notes/
+            </div>
+        </div>
+
+        <div class="copyright-info-bottom border-box">
+            <div class="copyright-post-author bottom-item">
+                <div class="type">
+                    Author
+                </div>
+                <div class="content">Ernesto Ignacio</div>
+            </div>
+
+            <div class="post-time bottom-item">
+                <div class="type">
+                    Published
+                </div>
+                <div class="content">2025-07-05 12:17</div>
+            </div>
+
+
+            <div class="post-license bottom-item">
+                <div class="type">
+                    License
+                </div>
+                <div class="content tooltip" data-tooltip-content="CC BY-NC-SA 4.0">
+                    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed" target="_blank">
+                        
+                            <i class="fa-brands fa-creative-commons"></i>
+                            <i class="fa-brands fa-creative-commons-by"></i>
+                            <i class="fa-brands fa-creative-commons-nc"></i>
+                            <i class="fa-brands fa-creative-commons-sa"></i>
+                        
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <i class="copyright-bg fa-solid fa-copyright"></i>
+    </div>
+    <div class="copy-copyright-info flex-center tooltip" data-tooltip-content="Copy copyright info" data-tooltip-offset-y="-2px">
+        <i class="fa-solid fa-copy"></i>
+    </div>
+</div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                            <ul class="post-tags-box border-box">
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/Go/">Go</a>
+                                    </li>
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/Study-Notes/">Study-Notes</a>
+                                    </li>
+                                
+                            </ul>
+                        
+                    </div>
+                    <div>
+                        
+                            <div class="post-share-container border-box">
+    <ul class="share-list-wrap border-box">
+        <li class="qq share-item border-box flex-center tooltip"
+            data-tooltip-content="Share to QQ"
+        >
+            <i class="fa-brands fa-qq"></i>
+        </li>
+        <li class="wechat share-item border-box flex-center tooltip tooltip-img"
+            data-tooltip-content="Share to WeChat"
+            data-tooltip-img-tip="Scan by WeChat"
+            data-tooltip-img-style="background-color: #fff; top: -10px; padding: 0.6rem 0.6rem 0.1rem 0.6rem;"
+        >
+            <i class="fa-brands fa-weixin"></i>
+        </li>
+        <li class="weibo share-item border-box flex-center tooltip"
+            data-tooltip-content="Share to WeiBo"
+        >
+            <i class="fa-brands fa-weibo"></i>
+        </li>
+    </ul>
+</div>
+
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                            <div class="prev-post">
+                                <a class="prev"
+                                   rel="prev"
+                                   href="/2025/%E3%80%8A%E5%85%A8%E6%96%B0-%E4%BA%91%E5%8E%9F%E7%94%9F%E7%B3%BB%E7%BB%9F%E7%B2%BE%E8%AE%B2%E4%B8%8E%E5%85%A8%E6%B5%81%E7%A8%8B%E8%90%BD%E5%9C%B0%E5%AE%9E%E8%B7%B5%E3%80%8BStudy-Notes/"
+                                   title="《全新 云原生系统精讲与全流程落地实践》Study Notes"
+                                >
+                                    <span class="left arrow-icon flex-center">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">《全新 云原生系统精讲与全流程落地实践》Study Notes</span>
+                                        <span class="post-nav-item">Prev posts</span>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2025/VirtualBox%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%85%8D%E7%BD%AE%E5%8F%8C%E7%BD%91%E5%8D%A1%E5%AE%9E%E7%8E%B0%E5%9B%BA%E5%AE%9AIP/"
+                                   title="VirtualBox虚拟机配置双网卡实现固定IP"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">VirtualBox虚拟机配置双网卡实现固定IP</span>
+                                        <span class="post-nav-item">Next posts</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+            <div class="pc-post-toc right-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%80%E7%AF%87%E8%AF%8D-1%E8%AE%B2"><span class="nav-text">开篇词 (1讲)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E7%AF%87%E8%AF%8D%EF%BD%9C%E8%BF%99%E6%A0%B7%E5%85%A5%E9%97%A8Go%EF%BC%8C%E6%89%8D%E8%83%BD%E5%B0%91%E8%B5%B0%E5%BC%AF%E8%B7%AF"><span class="nav-text">开篇词｜这样入门Go，才能少走弯路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0Go%E7%9A%843%E5%A4%A7%E7%90%86%E7%94%B1"><span class="nav-text">学习Go的3大理由</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0Go%E6%97%B6%E5%80%99%E7%9A%84%E5%BC%AF%E8%B7%AF"><span class="nav-text">学习Go时候的弯路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%AD%A6%E5%A5%BDGo"><span class="nav-text">*如何学好Go</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E7%AF%87%EF%BC%9A%E5%BF%83%E5%AE%9A%E4%B9%8B%E6%97%85-2%E8%AE%B2"><span class="nav-text">前置篇：心定之旅 (2讲)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#01%EF%BD%9C%E5%89%8D%E4%B8%96%E4%BB%8A%E7%94%9F%EF%BC%9A%E4%BD%A0%E4%B8%8D%E5%BE%97%E4%B8%8D%E4%BA%86%E8%A7%A3%E7%9A%84Go%E7%9A%84%E5%8E%86%E5%8F%B2%E5%92%8C%E7%8E%B0%E7%8A%B6"><span class="nav-text">01｜前世今生：你不得不了解的Go的历史和现状</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Go-%E8%AF%AD%E8%A8%80%E6%98%AF%E6%80%8E%E6%A0%B7%E8%AF%9E%E7%94%9F%E7%9A%84%EF%BC%9F"><span class="nav-text">Go 语言是怎样诞生的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%9D%E8%80%83%E9%A2%98%EF%BC%9A"><span class="nav-text">思考题：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#02%EF%BD%9C%E6%8B%92%E7%BB%9D%E2%80%9CHello-and-Bye%E2%80%9D%EF%BC%9AGo%E8%AF%AD%E8%A8%80%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%93%B2%E5%AD%A6%E6%98%AF%E6%80%8E%E4%B9%88%E4%B8%80%E5%9B%9E%E4%BA%8B%EF%BC%9F"><span class="nav-text">02｜拒绝“Hello and Bye”：Go语言的设计哲学是怎么一回事？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E5%8D%95"><span class="nav-text">简单</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%98%BE%E5%BC%8F"><span class="nav-text">显式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%84%E5%90%88"><span class="nav-text">组合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91"><span class="nav-text">并发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E5%B7%A5%E7%A8%8B"><span class="nav-text">面向工程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%9A%E5%8B%A4%E5%8A%A0%E7%BB%83%E6%89%8B-7%E8%AE%B2"><span class="nav-text">入门篇：勤加练手 (7讲)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#03%EF%BD%9C%E9%85%8D%E5%A5%BD%E7%8E%AF%E5%A2%83%EF%BC%9A%E9%80%89%E6%8B%A9%E4%B8%80%E7%A7%8D%E6%9C%80%E9%80%82%E5%90%88%E4%BD%A0%E7%9A%84Go%E5%AE%89%E8%A3%85%E6%96%B9%E6%B3%95"><span class="nav-text">03｜配好环境：选择一种最适合你的Go安装方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#04%EF%BD%9C%E5%88%9D%E7%AA%A5%E9%97%A8%E5%BE%84%EF%BC%9A%E4%B8%80%E4%B8%AAGo%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%BB%93%E6%9E%84%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="nav-text">04｜初窥门径：一个Go程序的结构是怎样的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#05%EF%BD%9C%E6%A0%87%E5%87%86%E5%85%88%E8%A1%8C%EF%BC%9AGo%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%B8%83%E5%B1%80%E6%A0%87%E5%87%86%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-text">05｜标准先行：Go项目的布局标准是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Go-%E8%AF%AD%E8%A8%80%E2%80%9C%E5%88%9B%E4%B8%96%E9%A1%B9%E7%9B%AE%E2%80%9D%E7%BB%93%E6%9E%84%E7%9A%84%E6%BC%94%E5%8C%96"><span class="nav-text">Go 语言“创世项目”结构的演化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%B0%E5%9C%A8%E7%9A%84-Go-%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%85%B8%E5%9E%8B%E7%BB%93%E6%9E%84%E5%B8%83%E5%B1%80%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="nav-text">现在的 Go 项目的典型结构布局是怎样的？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Go-%E5%8F%AF%E6%89%A7%E8%A1%8C%E7%A8%8B%E5%BA%8F%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%85%B8%E5%9E%8B%E7%BB%93%E6%9E%84%E5%B8%83%E5%B1%80"><span class="nav-text">Go 可执行程序项目的典型结构布局</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Go-%E5%BA%93%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%85%B8%E5%9E%8B%E7%BB%93%E6%9E%84%E5%B8%83%E5%B1%80"><span class="nav-text">Go 库项目的典型结构布局</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#06%EF%BD%9C%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%BC%8F%EF%BC%9AGo%E6%98%AF%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3%E5%8C%85%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E9%97%AE%E9%A2%98%E7%9A%84%EF%BC%9F"><span class="nav-text">06｜构建模式：Go是怎么解决包依赖管理问题的？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Go-%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%BC%8F%E6%98%AF%E6%80%8E%E4%B9%88%E6%BC%94%E5%8C%96%E7%9A%84%EF%BC%9F"><span class="nav-text">Go 构建模式是怎么演化的？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#GOPATH"><span class="nav-text">GOPATH</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vendor-%E6%9C%BA%E5%88%B6"><span class="nav-text">vendor 机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Go-Module"><span class="nav-text">Go Module</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#07%EF%BD%9C%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%BC%8F%EF%BC%9AGo-Module%E7%9A%846%E7%B1%BB%E5%B8%B8%E8%A7%84%E6%93%8D%E4%BD%9C"><span class="nav-text">07｜构建模式：Go Module的6类常规操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#08%EF%BD%9C%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0%E4%B8%8E%E5%8C%85%E5%88%9D%E5%A7%8B%E5%8C%96%EF%BC%9A%E6%90%9E%E6%B8%85Go%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%89%A7%E8%A1%8C%E6%AC%A1%E5%BA%8F"><span class="nav-text">08｜入口函数与包初始化：搞清Go程序的执行次序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#main-main-%E5%87%BD%E6%95%B0%EF%BC%9AGo-%E5%BA%94%E7%94%A8%E7%9A%84%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0"><span class="nav-text">main.main 函数：Go 应用的入口函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#init-%E5%87%BD%E6%95%B0%EF%BC%9AGo-%E5%8C%85%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E5%87%BD%E6%95%B0"><span class="nav-text">init 函数：Go 包的初始化函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%ACX%E7%AB%A0"><span class="nav-text">第X章</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#remark"><span class="nav-text">remark</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+    &copy;&nbsp;<span>2017</span>&nbsp;-&nbsp;2025
+    
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">Ernesto Ignacio</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        Powered by&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;&&nbsp;Theme&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+        
+        <div class="deploy-info info-item">
+            
+            This site is deployed on <span class="tooltip" data-tooltip-content="GitHub Pages"><img src="/images/brands/github.png"></span>
+            
+        </div>
+    
+
+    
+        <div class="count-info info-item">
+            
+                <span class="count-item border-box word">
+                    <span class="item-type border-box">Total words</span>
+                    <span class="item-value border-box word">63.6k</span>
+                </span>
+            
+
+            
+                <span class="count-item border-box uv">
+                    <span class="item-type border-box">Unique Visitor</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+                <span class="count-item border-box pv">
+                    <span class="item-type border-box">Page View</span>
+                    <span class="item-value border-box pv" id="busuanzi_value_site_pv"></span>
+                </span>
+            
+        </div>
+    
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="post-tools-list border-box">
+        <!-- PC encrypt again -->
+        
+
+        <!-- PC TOC show toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <!-- toggle mode -->
+        
+
+        <!-- rss -->
+        
+            <li class="tools-item rss flex-center">
+                <a class="flex-center"
+                   href="/atom.xml"
+                   target="_blank"
+                >
+                    <i class="fas fa-rss"></i>
+                </a>
+            </li>
+        
+
+        <!-- to bottom -->
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+            <li class="tools-item toggle-show-toc-tablet flex-center">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="Search..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+        <div class="tablet-post-toc-mask">
+            <div class="tablet-post-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%80%E7%AF%87%E8%AF%8D-1%E8%AE%B2"><span class="nav-text">开篇词 (1讲)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E7%AF%87%E8%AF%8D%EF%BD%9C%E8%BF%99%E6%A0%B7%E5%85%A5%E9%97%A8Go%EF%BC%8C%E6%89%8D%E8%83%BD%E5%B0%91%E8%B5%B0%E5%BC%AF%E8%B7%AF"><span class="nav-text">开篇词｜这样入门Go，才能少走弯路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0Go%E7%9A%843%E5%A4%A7%E7%90%86%E7%94%B1"><span class="nav-text">学习Go的3大理由</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0Go%E6%97%B6%E5%80%99%E7%9A%84%E5%BC%AF%E8%B7%AF"><span class="nav-text">学习Go时候的弯路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%AD%A6%E5%A5%BDGo"><span class="nav-text">*如何学好Go</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E7%AF%87%EF%BC%9A%E5%BF%83%E5%AE%9A%E4%B9%8B%E6%97%85-2%E8%AE%B2"><span class="nav-text">前置篇：心定之旅 (2讲)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#01%EF%BD%9C%E5%89%8D%E4%B8%96%E4%BB%8A%E7%94%9F%EF%BC%9A%E4%BD%A0%E4%B8%8D%E5%BE%97%E4%B8%8D%E4%BA%86%E8%A7%A3%E7%9A%84Go%E7%9A%84%E5%8E%86%E5%8F%B2%E5%92%8C%E7%8E%B0%E7%8A%B6"><span class="nav-text">01｜前世今生：你不得不了解的Go的历史和现状</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Go-%E8%AF%AD%E8%A8%80%E6%98%AF%E6%80%8E%E6%A0%B7%E8%AF%9E%E7%94%9F%E7%9A%84%EF%BC%9F"><span class="nav-text">Go 语言是怎样诞生的？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%9D%E8%80%83%E9%A2%98%EF%BC%9A"><span class="nav-text">思考题：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#02%EF%BD%9C%E6%8B%92%E7%BB%9D%E2%80%9CHello-and-Bye%E2%80%9D%EF%BC%9AGo%E8%AF%AD%E8%A8%80%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%93%B2%E5%AD%A6%E6%98%AF%E6%80%8E%E4%B9%88%E4%B8%80%E5%9B%9E%E4%BA%8B%EF%BC%9F"><span class="nav-text">02｜拒绝“Hello and Bye”：Go语言的设计哲学是怎么一回事？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E5%8D%95"><span class="nav-text">简单</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%98%BE%E5%BC%8F"><span class="nav-text">显式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%84%E5%90%88"><span class="nav-text">组合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91"><span class="nav-text">并发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E5%B7%A5%E7%A8%8B"><span class="nav-text">面向工程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%A5%E9%97%A8%E7%AF%87%EF%BC%9A%E5%8B%A4%E5%8A%A0%E7%BB%83%E6%89%8B-7%E8%AE%B2"><span class="nav-text">入门篇：勤加练手 (7讲)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#03%EF%BD%9C%E9%85%8D%E5%A5%BD%E7%8E%AF%E5%A2%83%EF%BC%9A%E9%80%89%E6%8B%A9%E4%B8%80%E7%A7%8D%E6%9C%80%E9%80%82%E5%90%88%E4%BD%A0%E7%9A%84Go%E5%AE%89%E8%A3%85%E6%96%B9%E6%B3%95"><span class="nav-text">03｜配好环境：选择一种最适合你的Go安装方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#04%EF%BD%9C%E5%88%9D%E7%AA%A5%E9%97%A8%E5%BE%84%EF%BC%9A%E4%B8%80%E4%B8%AAGo%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%BB%93%E6%9E%84%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="nav-text">04｜初窥门径：一个Go程序的结构是怎样的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#05%EF%BD%9C%E6%A0%87%E5%87%86%E5%85%88%E8%A1%8C%EF%BC%9AGo%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%B8%83%E5%B1%80%E6%A0%87%E5%87%86%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-text">05｜标准先行：Go项目的布局标准是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Go-%E8%AF%AD%E8%A8%80%E2%80%9C%E5%88%9B%E4%B8%96%E9%A1%B9%E7%9B%AE%E2%80%9D%E7%BB%93%E6%9E%84%E7%9A%84%E6%BC%94%E5%8C%96"><span class="nav-text">Go 语言“创世项目”结构的演化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%B0%E5%9C%A8%E7%9A%84-Go-%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%85%B8%E5%9E%8B%E7%BB%93%E6%9E%84%E5%B8%83%E5%B1%80%E6%98%AF%E6%80%8E%E6%A0%B7%E7%9A%84%EF%BC%9F"><span class="nav-text">现在的 Go 项目的典型结构布局是怎样的？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Go-%E5%8F%AF%E6%89%A7%E8%A1%8C%E7%A8%8B%E5%BA%8F%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%85%B8%E5%9E%8B%E7%BB%93%E6%9E%84%E5%B8%83%E5%B1%80"><span class="nav-text">Go 可执行程序项目的典型结构布局</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Go-%E5%BA%93%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%85%B8%E5%9E%8B%E7%BB%93%E6%9E%84%E5%B8%83%E5%B1%80"><span class="nav-text">Go 库项目的典型结构布局</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#06%EF%BD%9C%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%BC%8F%EF%BC%9AGo%E6%98%AF%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3%E5%8C%85%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86%E9%97%AE%E9%A2%98%E7%9A%84%EF%BC%9F"><span class="nav-text">06｜构建模式：Go是怎么解决包依赖管理问题的？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Go-%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%BC%8F%E6%98%AF%E6%80%8E%E4%B9%88%E6%BC%94%E5%8C%96%E7%9A%84%EF%BC%9F"><span class="nav-text">Go 构建模式是怎么演化的？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#GOPATH"><span class="nav-text">GOPATH</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vendor-%E6%9C%BA%E5%88%B6"><span class="nav-text">vendor 机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Go-Module"><span class="nav-text">Go Module</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#07%EF%BD%9C%E6%9E%84%E5%BB%BA%E6%A8%A1%E5%BC%8F%EF%BC%9AGo-Module%E7%9A%846%E7%B1%BB%E5%B8%B8%E8%A7%84%E6%93%8D%E4%BD%9C"><span class="nav-text">07｜构建模式：Go Module的6类常规操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#08%EF%BD%9C%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0%E4%B8%8E%E5%8C%85%E5%88%9D%E5%A7%8B%E5%8C%96%EF%BC%9A%E6%90%9E%E6%B8%85Go%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%89%A7%E8%A1%8C%E6%AC%A1%E5%BA%8F"><span class="nav-text">08｜入口函数与包初始化：搞清Go程序的执行次序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#main-main-%E5%87%BD%E6%95%B0%EF%BC%9AGo-%E5%BA%94%E7%94%A8%E7%9A%84%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0"><span class="nav-text">main.main 函数：Go 应用的入口函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#init-%E5%87%BD%E6%95%B0%EF%BC%9AGo-%E5%8C%85%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E5%87%BD%E6%95%B0"><span class="nav-text">init 函数：Go 包的初始化函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%ACX%E7%AB%A0"><span class="nav-text">第X章</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#remark"><span class="nav-text">remark</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        </div>
+    
+</main>
+
+
+
+
+
+<!-- common js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/libs/anime.min.js"></script>
+
+<!-- local search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/lazyload.min.js"></script>
+
+
+<div class="pjax">
+    <!-- home page -->
+    
+
+    <!-- post page -->
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/post/toc.min.js"></script>
+        
+
+        <!-- copyright-info -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/post/copyright-info.min.js"></script>
+        
+
+        <!-- share -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/post/share.min.js"></script>
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+    
+<script src="//cdn.jsdelivr.net/npm/mermaid@7.1.2/dist/mermaid.min.js"></script>
+
+    <script data-pjax>
+      if (window.mermaid) {
+        mermaid.init()
+      }
+    </script>
+
+
+
+
+
+
+<!-- pjax -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/libs/pjax.min.js"></script>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart()
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd()
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'))
+            KEEP.initExecute()
+        });
+    });
+</script>
+
+
+
+
+</body>
+</html>

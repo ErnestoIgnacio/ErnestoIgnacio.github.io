@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Ernesto Ignacio&#39;s Blog">
+    <meta name="author" content="Ernesto Ignacio">
+    
+    <title>
+        
+            Redis Study Notes |
+        
+        Ernesto Ignacio&#39;s Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+        <link rel="shortcut icon" href="https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/avatar.45ve77572.svg">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/fontawesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/regular.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/solid.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/font/css/brands.min.css">
+    
+    <script class="keep-theme-configurations">
+    const KEEP = window.KEEP || {}
+    KEEP.hexo_config = {"hostname":"ernestoignacio.github.io","root":"/","language":"en","path":"search.json"}
+    KEEP.theme_config = {"base_info":{"primary_color":"#b2bec3","title":"Ernesto Ignacio's Blog","author":"Ernesto Ignacio","avatar":"https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/avatar.45ve77572.svg","logo":"https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/avatar.45ve77572.svg","favicon":"https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/avatar.45ve77572.svg","mode":"light"},"menu":{"home":"/","archives":"/archives"},"first_screen":{"enable":true,"background_img":"https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/bg.6pnp58bk7c.webp","background_img_dark":"https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/bg.6pnp58bk7c.webp","description":"Stay Hungry Stay Foolish","hitokoto":false},"social_contact":{"enable":true,"links":{"github":"https://github.com/ErnestoIgnacio","weixin":null,"qq":null,"weibo":null,"zhihu":null,"twitter":null,"x":null,"facebook":null,"email":"ernst.ignis@gmail.com"}},"scroll":{"progress_bar":true,"percent":true,"hide_header":true},"home":{"announcement":null,"category":true,"tag":true,"post_datetime":"updated","post_datetime_format":"YYYY-MM-DD"},"post":{"author_badge":{"enable":false,"level_badge":true,"custom_badge":["One","Two","Three"]},"word_count":{"wordcount":true,"min2read":true},"datetime_format":"YYYY-MM-DD","copyright_info":true,"share":true,"reward":{"enable":false,"img_link":null,"text":null,"icon":null},"img_align":"center","created_datetime_icon":"fa-solid fa-calendar-plus","updated_datetime_icon":"fa-solid fa-file-pen"},"code_block":{"tools":{"enable":true,"style":"mac"},"highlight_theme":"obsidian"},"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true,"layout":"right"},"website_count":{"busuanzi_count":{"enable":true,"site_uv":true,"site_pv":true,"page_pv":true}},"local_search":{"enable":true,"preload":true},"comment":{"enable":false,"use":"valine","valine":{"appid":null,"appkey":null,"server_urls":null,"placeholder":null},"gitalk":{"github_id":null,"github_admins":null,"repository":null,"client_id":null,"client_secret":null,"proxy":null},"twikoo":{"env_id":null,"region":null,"version":"1.6.39"},"waline":{"server_url":null,"reaction":false,"version":"3.3.2"},"giscus":{"repo":null,"repo_id":null,"category":"Announcements","category_id":null,"reactions_enabled":false},"artalk":{"server":null},"disqus":{"shortname":null}},"rss":{"enable":true},"lazyload":{"enable":true},"cdn":{"enable":true,"provider":"cdnjs"},"pjax":{"enable":true},"footer":{"since":2017,"word_count":true,"site_deploy":{"enable":true,"provider":"github","url":null},"record":{"enable":false,"list":[{"code":null,"link":null}]}},"inject":{"enable":false,"css":[null],"js":[null]},"mermaid":{"enable":true,"version":"10.5.0"},"root":"","source_data":{},"version":"4.2.5"}
+    KEEP.language_ago = {"second":"%s seconds ago","minute":"%s minutes ago","hour":"%s hours ago","day":"%s days ago","week":"%s weeks ago","month":"%s months ago","year":"%s years ago"}
+    KEEP.language_code_block = {"copy":"Copy code","copied":"Copied","fold":"Fold code block","folded":"Folded"}
+    KEEP.language_copy_copyright = {"copy":"Copy copyright info","copied":"Copied","title":"Original post title","author":"Original post author","link":"Original post link"}
+  </script>
+<meta name="generator" content="Hexo 7.3.0"><link rel="alternate" href="/atom.xml" title="Ernesto Ignacio's Blog" type="application/atom+xml">
+</head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <i class="pjax-progress-icon fas fa-circle-notch fa-spin"></i>
+    
+</div>
+
+
+
+<main class="page-container border-box">
+    <!-- home first screen  -->
+    
+
+    <!-- page content -->
+    <div class="page-main-content border-box">
+        <div class="page-main-content-top">
+            
+<header class="header-wrapper">
+
+    <div class="border-box header-content">
+        <div class="left flex-start border-box">
+            
+                <a class="logo-image border-box" href="/">
+                    <img src="https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/avatar.45ve77572.svg">
+                </a>
+            
+            <a class="site-name border-box" href="/">
+               Ernesto Ignacio&#39;s Blog
+            </a>
+        </div>
+
+        <div class="right border-box">
+            <div class="pc border-box">
+                <ul class="menu-list border-box">
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/">
+                                
+                                HOME
+                                
+                            </a>
+                            
+                        </li>
+                    
+                        
+                        <li class="menu-item flex-start border-box">
+                            <a class="menu-text-color border-box" href="/archives">
+                                
+                                ARCHIVES
+                                
+                            </a>
+                            
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="menu-text-color fas search fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile border-box flex-start">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list border-box">
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/">
+                            
+                            HOME
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+                
+                <li class="drawer-menu-item border-box not-sub-menu">
+                    <label class="drawer-menu-label border-box">
+                        <a class="drawer-menu-text-color left-side flex-start border-box" href="/archives">
+                            
+                            ARCHIVES
+                        </a>
+                        
+                    </label>
+                    
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle border-box">
+
+            <div class="main-content border-box">
+                
+
+                    
+<div class="fade-in-down-animation">
+    <div class="post-page-container border-box">
+        <div class="post-content-container border-box">
+            
+
+            <div class="post-content-bottom border-box">
+                
+                    <div class="post-title">
+                        Redis Study Notes
+                    </div>
+                
+
+                
+                    <div class="post-header border-box">
+                        
+                            <div class="avatar-box border-box">
+                                <img src="https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/avatar.45ve77572.svg">
+                            </div>
+                        
+                        <div class="info-box">
+                            <div class="author border-box">
+                                <span class="name">Ernesto Ignacio</span>
+                                
+                            </div>
+                            <div class="meta-info border-box">
+                                
+
+<div class="post-meta-info-container border-box post">
+    <div class="post-meta-info border-box">
+        
+
+        
+            <span class="meta-info-item post-create-date">
+                <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
+                <span class="datetime">2025-09-13</span>
+            </span>
+
+            
+                <span class="meta-info-item post-update-date">
+                    <i class="icon fa-solid fa-file-pen"></i>&nbsp;
+                    <span class="datetime" data-updated="Thu Oct 09 2025 08:38:49 GMT-0500">2025-10-09</span>
+                </span>
+            
+        
+
+        
+            <span class="meta-info-item post-category border-box"><i class="icon fas fa-folder"></i>&nbsp;
+                <ul class="post-category-ul">
+                    
+                            <li class="category-item"><a href="/categories/DataBase/">DataBase</a></li>
+                        
+                    
+                            <li class="category-item">&nbsp;<i class="icon fas fa-angle-right"></i>&nbsp;<a href="/categories/DataBase/Redis/">Redis</a></li>
+                        
+                    
+                </ul>
+            </span>
+        
+
+        
+            <span class="post-tag meta-info-item border-box">
+                <ul class="post-tag-ul">
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/DataBase/">DataBase</a></li>
+                        
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/Redis/">Redis</a></li>
+                        
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/NoSQL/">NoSQL</a></li>
+                        
+                    
+                </ul>
+            </span>
+        
+
+        
+        
+            <span class="meta-info-item post-wordcount">
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>4.6k Words</span>
+            </span>
+        
+        
+            <span class="meta-info-item post-min2read">
+                <i class="icon fas fa-clock"></i>&nbsp;<span>18 Mins</span>
+            </span>
+        
+        
+            <span class="meta-info-item post-pv">
+                <i class="icon fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    </div>
+
+    
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                
+
+                <div class="post-content keep-markdown-body ">
+                    
+
+                    
+                         <p>Introduction：这篇博客是笔者长期学习Redis的学习笔记，包含了Redis安装、使用、优化、运维、架构设计等各个层面的核心知识点总结</p>
+<p>From：这些笔记、知识点来自Redi的官网、相关书籍、博客、教程等</p>
+<p>Origin：笔者想把Redi的核心知识点做一个系统梳理，能够在软件开发者的角度彻底理解Redis的工作原理以及实战使用，同时查漏补缺</p>
+<span id="more"></span>
+<br/>
+
+<h1 id="Redis介绍"><a href="#Redis介绍" class="headerlink" title="Redis介绍"></a>Redis介绍</h1><h2 id="Redis简介与功能特性"><a href="#Redis简介与功能特性" class="headerlink" title="Redis简介与功能特性"></a>Redis简介与功能特性</h2><ul>
+<li>Redis 英文全称是 Remote Dictionary Server</li>
+<li>Redis 是完全开源的，使用 ANSI C 语言编写，遵守 BSD 协议，是一个高性能的 Key-Value 数据库</li>
+<li>Redis 提供了丰富的数据结构，例如 String、 Hash、 List、Set、SortedSet 等等</li>
+<li>Redis 的数据是存在内存中的，但 Redis 也可以通过定期策略或者手动操作进行持久化数据</li>
+<li>Redis 广泛应用于缓存、分布式锁等多种场景；同时 Redis 支持事务、持久化、LUA 脚本、发布&#x2F;订阅、缓存淘汰、流技术等多种功能特性</li>
+<li>Redis 提供了主从模式、Redis Sentinel 和 Redis Cluster 集群架构方案</li>
+</ul>
+<img src='https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/image.8hgudjbxv7.webp' width='70%' />
+
+<br/>
+
+<br/>
+
+<h2 id="Redis-适用场景"><a href="#Redis-适用场景" class="headerlink" title="Redis 适用场景"></a>Redis 适用场景</h2><h3 id="热点加速-缓存加速"><a href="#热点加速-缓存加速" class="headerlink" title="热点加速&#x2F;缓存加速"></a>热点加速&#x2F;缓存加速</h3><ul>
+<li>缓存是Redis最主要的功能。作为互联网应用上的热点场景：高并发下的数据加载</li>
+</ul>
+<br/>
+
+<h3 id="分布式会话-共享会话"><a href="#分布式会话-共享会话" class="headerlink" title="分布式会话&#x2F;共享会话"></a>分布式会话&#x2F;共享会话</h3><ul>
+<li>使用 Redis 将用户的 Session 进行集中管理，每次用户更新或者查询登录信息都直接从 Redis 中集中获取</li>
+<li>（一个分布式 Web 服务将用户的 Session 信息保存在各自服务器，如果节点故障或者是用户刷新一次可能就需要重新登录，这样显然有问题）</li>
+</ul>
+<br/>
+
+<h3 id="排行榜场景"><a href="#排行榜场景" class="headerlink" title="排行榜场景"></a>排行榜场景</h3><ul>
+<li>Redis 提供的zset 数据类型能够快速实现这些复杂的排行榜（如电商网站的月度销量排行榜、社交 APP 的礼物排行榜、小程序的投票排行榜等等）</li>
+</ul>
+<br/>
+
+<h3 id="分布式计数器-集群计数器"><a href="#分布式计数器-集群计数器" class="headerlink" title="分布式计数器&#x2F;集群计数器"></a>分布式计数器&#x2F;集群计数器</h3><ul>
+<li><p>例如浏览数量、播放数量，为了保证数据实时效，每次浏览都得给+1，并发量高时如果每次都请求数据库操作无疑是种挑战和压力</p>
+</li>
+<li><p>单机：可以利用原子操作&#x2F;类型实现计数器</p>
+</li>
+<li><p>分布式环境：Redis 提供的 incr 命令来实现计数器功能，内存操作，性能非常好</p>
+</li>
+</ul>
+<br/>
+
+<h3 id="最新消息"><a href="#最新消息" class="headerlink" title="最新消息"></a>最新消息</h3><ul>
+<li>Redis 列表结构，LPUSH 可以在列表头部插入一个内容 ID 作为关键字，LTRIM 可用来限制列表的数量，这样列表永远为 N 个 ID，无需查询最新的列表，直接根据 ID 去到对应的内容页即可</li>
+</ul>
+<br/>
+
+<h3 id="请求限流"><a href="#请求限流" class="headerlink" title="请求限流"></a>请求限流</h3><ul>
+<li>主要用于集群限流</li>
+</ul>
+<h3 id="分布式锁实现"><a href="#分布式锁实现" class="headerlink" title="分布式锁实现"></a>分布式锁实现</h3><ul>
+<li>分布式技术带来的技术挑战是对同一个资源的并发访问，如全局 ID、减库存、秒杀等场景，并发量不大的场景可以使用数据库的悲观锁来实现，但在高并发场景中，利用数据库锁来控制资源的并发访问性能极低，我们可以利用 Redis 的 setnx 功能来编写分布式的锁</li>
+</ul>
+<br/>
+
+<br/>
+
+<h2 id="Redis-vs-Memcached"><a href="#Redis-vs-Memcached" class="headerlink" title="Redis vs Memcached"></a>Redis vs Memcached</h2><table>
+<thead>
+<tr>
+<th align="center">维度</th>
+<th><strong>Redis</strong></th>
+<th><strong>Memcached</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>定位</strong></td>
+<td>内存数据结构服务器，支持丰富功能（缓存 + 数据结构 + 消息队列 + 模块）</td>
+<td>轻量级分布式内存缓存，专注高效 KV 缓存</td>
+</tr>
+<tr>
+<td align="center"><strong>数据类型</strong></td>
+<td>字符串、哈希、列表、集合、有序集合、位图、HyperLogLog、Streams、地理位置等</td>
+<td>仅支持 key → value（blob），有限的 incr&#x2F;decr、CAS</td>
+</tr>
+<tr>
+<td align="center"><strong>持久化</strong></td>
+<td>支持 RDB 快照、AOF 日志，可恢复数据</td>
+<td>不支持，重启即丢失</td>
+</tr>
+<tr>
+<td align="center"><strong>并发模型</strong></td>
+<td>单线程执行命令（Redis 6+ 支持 I&#x2F;O 多线程）；需多实例或 Cluster 利用多核</td>
+<td>多线程并发处理，天然能用多核，吞吐高</td>
+</tr>
+<tr>
+<td align="center"><strong>缓存淘汰策略</strong></td>
+<td>多种策略：LRU&#x2F;LFU&#x2F;TTL&#x2F;随机&#x2F;不驱逐等，粒度灵活</td>
+<td>基于 slab 的近似 LRU，策略单一</td>
+</tr>
+<tr>
+<td align="center"><strong>内存管理</strong></td>
+<td>对象有额外开销，但支持小对象优化（ziplist 等）；灵活但更占内存</td>
+<td>slab 分配器，内存利用率高，对大量小对象更省</td>
+</tr>
+<tr>
+<td align="center"><strong>可扩展性</strong></td>
+<td>支持 Redis Cluster（分片）、Sentinel（HA）、复制；模块化扩展</td>
+<td>没有内建分布式和 HA，通常用客户端一致性哈希或代理（mcrouter）</td>
+</tr>
+<tr>
+<td align="center"><strong>高可用&#x2F;复制</strong></td>
+<td>内置主从复制、Sentinel 故障转移、Cluster 自动分片</td>
+<td>无内建，需应用层或外部代理实现</td>
+</tr>
+<tr>
+<td align="center"><strong>安全</strong></td>
+<td>支持 ACL、认证、TLS（6.0+）</td>
+<td>协议简单，支持 SASL（需启用），TLS 支持有限</td>
+</tr>
+<tr>
+<td align="center"><strong>扩展能力</strong></td>
+<td>Lua 脚本、事务、发布&#x2F;订阅、Stream、模块（RedisSearch、RedisJSON、Graph 等）</td>
+<td>无扩展机制</td>
+</tr>
+<tr>
+<td align="center"><strong>生态与工具</strong></td>
+<td>丰富（redis-cli、RedisInsight、redis-benchmark），多云提供托管服务</td>
+<td>工具少（memcached-tool），但 mcrouter、twemproxy 可用；也有云托管</td>
+</tr>
+<tr>
+<td align="center"><strong>典型使用场景</strong></td>
+<td>会话存储、排行榜、计数器、消息队列、发布订阅、复杂数据结构缓存</td>
+<td>页面缓存、热点对象缓存、会话缓存（非持久化）、极高并发 KV 缓存</td>
+</tr>
+<tr>
+<td align="center"><strong>运维复杂度</strong></td>
+<td>功能丰富但配置&#x2F;运维复杂（持久化、Cluster、备份）</td>
+<td>部署简单，节点可直接扩展，运维轻量</td>
+</tr>
+<tr>
+<td align="center"><strong>性能特点</strong></td>
+<td>单核低延迟，复杂结构操作高效；横向扩展依赖 Cluster&#x2F;多实例</td>
+<td>多核并发吞吐强大，纯 KV 场景性能通常更高</td>
+</tr>
+</tbody></table>
+<br/>
+
+<br/>
+
+<h2 id="Redis-vs-MySQL"><a href="#Redis-vs-MySQL" class="headerlink" title="Redis vs MySQL"></a>Redis vs MySQL</h2><ul>
+<li>Redis 和 MySQL <strong>不是替代关系，而是互补关系</strong></li>
+<li>常见架构：<ul>
+<li>MySQL 作为持久化存储</li>
+<li><strong>Redis 作为缓存层</strong>，存储热点数据，提升读写性能，缓解数据库压力</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center">维度</th>
+<th><strong>Redis</strong></th>
+<th><strong>MySQL</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>定位</strong></td>
+<td>内存型键值&#x2F;数据结构存储，主要用于缓存与高性能场景</td>
+<td>关系型数据库，主要用于持久化存储和复杂查询</td>
+</tr>
+<tr>
+<td align="center"><strong>数据存储模型</strong></td>
+<td>Key-Value + 丰富数据结构（String、Hash、List、Set、ZSet、Stream 等）</td>
+<td>表、行、列，支持复杂关系模型</td>
+</tr>
+<tr>
+<td align="center"><strong>存储介质</strong></td>
+<td>内存为主（可选持久化到磁盘）</td>
+<td>磁盘为主（InnoDB 缓存页 + redo log 优化）</td>
+</tr>
+<tr>
+<td align="center"><strong>性能</strong></td>
+<td>读写速度极快（微秒级），高并发能力强</td>
+<td>读写性能较慢（毫秒级），尤其在高并发下需要优化</td>
+</tr>
+<tr>
+<td align="center"><strong>持久化</strong></td>
+<td>可选（RDB 快照、AOF 日志）；可关闭以获得极致性能</td>
+<td>强一致持久化，数据安全性高</td>
+</tr>
+<tr>
+<td align="center"><strong>事务支持</strong></td>
+<td>简单事务（MULTI&#x2F;EXEC），支持 Lua 脚本原子执行</td>
+<td>完整的 ACID 事务支持</td>
+</tr>
+<tr>
+<td align="center"><strong>查询能力</strong></td>
+<td>基于 key 的高效查找，部分数据结构支持 O(1)&#x2F;O(logN) 操作</td>
+<td>强大的 SQL 查询，支持 JOIN、聚合、索引优化</td>
+</tr>
+<tr>
+<td align="center"><strong>扩展性</strong></td>
+<td>支持 Cluster 分片与复制，适合水平扩展</td>
+<td>主从复制、分库分表、Sharding 方案，扩展复杂</td>
+</tr>
+<tr>
+<td align="center"><strong>数据一致性</strong></td>
+<td>弱一致性（最终一致，依赖应用保证）</td>
+<td>强一致性（事务 + WAL）</td>
+</tr>
+<tr>
+<td align="center"><strong>高可用&#x2F;集群</strong></td>
+<td>Sentinel、Cluster 原生支持</td>
+<td>MGR、主从复制、Galera Cluster 等方案</td>
+</tr>
+<tr>
+<td align="center"><strong>典型应用场景</strong></td>
+<td>缓存层、会话管理、排行榜、消息队列、实时计数器</td>
+<td>核心业务数据存储、事务处理、复杂查询</td>
+</tr>
+<tr>
+<td align="center"><strong>优缺点总结</strong></td>
+<td>优点：高性能、灵活数据结构；缺点：内存开销大、查询能力弱</td>
+<td>优点：数据安全、查询强大；缺点：性能受限、扩展复杂</td>
+</tr>
+</tbody></table>
+<br/>
+
+<br/>
+
+<br/>
+
+<h1 id="Redis安装"><a href="#Redis安装" class="headerlink" title="Redis安装"></a>Redis安装</h1><h2 id="安装前置条件"><a href="#安装前置条件" class="headerlink" title="安装前置条件"></a>安装前置条件</h2><h3 id="操作系统说明"><a href="#操作系统说明" class="headerlink" title="操作系统说明"></a>操作系统说明</h3><ul>
+<li>Redis 是用 ANSI C 编写的，可以在大多数 POSIX 系统上运行，比如 Linux、*BSD 和 Mac OS X，没有外部依赖</li>
+<li>Linux 和 OS X 是 Redis 开发和测试最多的两个操作系统</li>
+<li>官方推荐使用 Linux 部署，Windows 版本没有官方支持</li>
+</ul>
+<br/>
+
+<h3 id="操作系统参数设置（使用root用户设置）"><a href="#操作系统参数设置（使用root用户设置）" class="headerlink" title="操作系统参数设置（使用root用户设置）"></a>操作系统参数设置（使用root用户设置）</h3><ul>
+<li><p>在 &#x2F;etc&#x2F;sysctl.conf 中设置 <code>vm.overcommit_memory = 1</code>，用 <code>sysctl vm.overcommit_memory=1</code> 立即生效</p>
+<ul>
+<li>0：内核将检查是否有足够的内存分配给程序，如果没有则申请失败，并把错误返回给应用进程。而在 Redis 中这个错误就会表现为“Cannot allocate memory”，然后触发 OOM</li>
+<li>1：表示内核允许超量使用内存直到用完为止</li>
+<li>2：表示内核决不超量使用内存，即系统整个内存空间不能超过 swap+50%的 RAM 值，50%是 overcommit_ratio 默认值，此参数支持修改</li>
+</ul>
+</li>
+<li><p>配置大内存页面，<code>echo never &gt; /sys/kernel/mm/transparent_hugepage/enabled</code>，并同过下面命令进行永久生效</p>
+</li>
+</ul>
+  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cat &gt;&gt; /etc/rc.d/rc.local &lt;&lt; EOF</span><br><span class="line">if test -f /sys/kernel/mm/transparent_hugepage/enabled; then</span><br><span class="line">echo never &gt; /sys/kernel/mm/transparent_hugepage/enabled</span><br><span class="line">fi</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>关闭交换 swap 内存，<code>swapoff -a</code>，并通过 <code>vim /etc/fstab</code> 将交换内存注释掉(确保物理机有够用的物理内存)</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">/dev/mapper/centos-swap swap                    swap    defaults        0 0</span></span><br></pre></td></tr></table></figure>
+
+<br/>
+
+<br/></li>
+</ul>
+<h2 id="源码编译安装（单机版）（使用普通用户）"><a href="#源码编译安装（单机版）（使用普通用户）" class="headerlink" title="源码编译安装（单机版）（使用普通用户）"></a>源码编译安装（单机版）（使用普通用户）</h2><h3 id="目录规划与初始化"><a href="#目录规划与初始化" class="headerlink" title="目录规划与初始化"></a>目录规划与初始化</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使用redis的管理用户（非root用户）</span></span><br><span class="line">cd ~ &amp;&amp; mkdir -p redis/&#123;bin,conf,data,run,log,tls&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[ignacio@vbox ~]$ tree ./redis/</span><br><span class="line">./redis/</span><br><span class="line">├── bin		程序目录，二进制文件目录</span><br><span class="line">├── conf	配置文件</span><br><span class="line">├── data	数据目录</span><br><span class="line">├── log		日志目录</span><br><span class="line">├── run		进程目录</span><br><span class="line">└── tls		tls 证书目录(可选)</span><br></pre></td></tr></table></figure>
+
+<br/>
+
+<h3 id="源码下载、编译、安装"><a href="#源码下载、编译、安装" class="headerlink" title="源码下载、编译、安装"></a>源码下载、编译、安装</h3><ul>
+<li><p>Redis各个版本下载地址：<a class="link"   target="_blank" rel="noopener" href="https://github.com/redis/redis-hashes" >https://github.com/redis/redis-hashes<i class="fas fa-external-link-alt"></i></a></p>
+</li>
+<li><p>Redis源码下载、解压</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd ~</span><br><span class="line">wget http://download.redis.io/releases/redis-8.2.1.tar.gz</span><br><span class="line">tar -zxvf redis-8.2.1.tar.gz</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编译</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd redis-8.2.1</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">多线程编译（注意编译时候需要的软件依赖，以及gcc的版本）</span></span><br><span class="line">make -j 2</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">make install 将会默认安装到/usr/local/bin 目录</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">安装到指定目录</span></span><br><span class="line">make install PREFIX=~/redis</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装目录简介</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[ignacio@vbox redis]$ tree ~/redis</span><br><span class="line">/home/ignacio/redis</span><br><span class="line">├── bin</span><br><span class="line">│   ├── redis-benchmark		性能基准测试命令</span><br><span class="line">│   ├── redis-check-aof -&gt; redis-server		aof 检测修复工具</span><br><span class="line">│   ├── redis-check-rdb -&gt; redis-server		rdb 检测修复工具</span><br><span class="line">│   ├── redis-cli		客户端命令工具</span><br><span class="line">│   ├── redis-sentinel -&gt; redis-server		哨兵命令工具</span><br><span class="line">│   └── redis-server		服务端命令</span><br><span class="line">├── conf</span><br><span class="line">├── data</span><br><span class="line">├── log</span><br><span class="line">├── run</span><br><span class="line">└── tls</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ul>
+<br/>
+
+<h3 id="Redis配置"><a href="#Redis配置" class="headerlink" title="Redis配置"></a>Redis配置</h3><ul>
+<li><p>将源码路径下的 redis.conf 复制至安装目录 conf 目录下面，并改名为 redis_6379.conf</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp ~/redis-8.2.1/redis.conf ~/redis/conf/redis_6379.conf</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改配置文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修改 IP，0.0.0.0 表示绑定所有 IP</span></span><br><span class="line">bind 0.0.0.0</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修改端口</span></span><br><span class="line">port 6379</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修改进程文件(按端口规则命名)</span></span><br><span class="line">pidfile /home/ignacio/redis/run/redis_6376.pid</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修改日志文件</span></span><br><span class="line">logfile &quot;/home/ignacio/redis/log/redis_6379.log&quot;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修改为后台模式(默认为前台模式，关闭终端后会杀死 Redis 进程)</span></span><br><span class="line">daemonize yes</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修改 rdb 文件名称(Redis 默认会启用 rdb 持久化，按端口规则命名)</span></span><br><span class="line">dbfilename dump_6379.rdb</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修改 aof 文件名称(Redis 默认不会启用 aof 持久化，这里也按端口规则命名，为后续形成统一规范)</span></span><br><span class="line">appendfilename &quot;appendonly_6379.aof&quot;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修改 aof 文件夹名称,7 以后新增(Redis 默认不会启用 aof 持久化，这里也按端口规则命名，为后续形成统一规范)</span></span><br><span class="line">appenddirname &quot;appendonlydir6379&quot;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修改工作路径(这里一定要固定目录，否则每次 Redis 启动目录不一样，会导致数据文件路径不一样，造成启动混乱)</span></span><br><span class="line">dir /home/ignacio/redis/data</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修改集群配置文件(Redis 默认不会启用集群，这里也按端口规则命名，为后续形成统一规范)</span></span><br><span class="line">cluster-config-file nodes-6379.conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修改保护模式(默认为 <span class="built_in">yes</span>，如果没有配置密码，必须设置为 no)</span></span><br><span class="line">protected-mode no</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置文件参考</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">bind 0.0.0.0 #主机 IP</span><br><span class="line">protected-mode no #保护模式设成 no</span><br><span class="line">port 6379 #Redis 端口</span><br><span class="line">pidfile &quot;/home/xiangsl/redis/run/redis_6379.pid&quot; #进程文件</span><br><span class="line">logfile &quot;/home/xiangsl/redis/log/redis_6379.log&quot; #日志文件</span><br><span class="line">daemonize yes #守护模式</span><br><span class="line">save 3600 1 #rdb 配置</span><br><span class="line">save 300 100</span><br><span class="line">save 60 10000</span><br><span class="line">dbfilename &quot;dump_6379.rdb&quot; #rdb 文件</span><br><span class="line">appendonly no #aof 配置</span><br><span class="line">appendfilename &quot;appendonly_6379.aof&quot; #aof 文件</span><br><span class="line">appenddirname &quot;appendonlydir_6379&quot; #aof 文件夹</span><br><span class="line">dir &quot;/home/xiangsl/redis/data&quot; #数据文件目录</span><br><span class="line">cluster-enabled no #非集群模式</span><br><span class="line">cluster-config-file nodes-6379.conf #集群配置文件</span><br></pre></td></tr></table></figure></li>
+</ul>
+<br/>
+
+<h3 id="Redis启动与检查"><a href="#Redis启动与检查" class="headerlink" title="Redis启动与检查"></a>Redis启动与检查</h3><ul>
+<li><p>Redis 进程启动</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启动命令(注意路径)：</span></span><br><span class="line">~/redis/bin/redis-server ~/redis/conf/redis_6379.conf</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>日志方式检查</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[ignacio@vbox ~]$ tail -200f  ~/redis/log/redis_6379.log</span><br><span class="line">9883:C 24 Sep 2025 20:07:06.688 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo</span><br><span class="line">9883:C 24 Sep 2025 20:07:06.689 * Redis version=8.2.1, bits=64, commit=00000000, modified=0, pid=9883, just started</span><br><span class="line">9883:C 24 Sep 2025 20:07:06.689 * Configuration loaded</span><br><span class="line">9883:M 24 Sep 2025 20:07:06.689 # You requested maxclients of 10000 requiring at least 10032 max file descriptors.</span><br><span class="line">9883:M 24 Sep 2025 20:07:06.689 # Server can&#x27;t set maximum open files to 10032 because of OS error: Operation not permitted.</span><br><span class="line">9883:M 24 Sep 2025 20:07:06.689 # Current maximum open files is 4096. maxclients has been reduced to 4064 to compensate for low ulimit. If you need higher maxclients increase &#x27;ulimit -n&#x27;.</span><br><span class="line">9883:M 24 Sep 2025 20:07:06.689 * monotonic clock: POSIX clock_gettime</span><br><span class="line">9883:M 24 Sep 2025 20:07:06.690 * Running mode=standalone, port=6379.</span><br><span class="line">9883:M 24 Sep 2025 20:07:06.690 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.</span><br><span class="line">9883:M 24 Sep 2025 20:07:06.691 * Server initialized</span><br><span class="line">9883:M 24 Sep 2025 20:07:06.692 * Ready to accept connections tcp</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>进程方式检查</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -ef | grep redis</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>命令模式检查</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[ignacio@vbox ~]$ ~/redis/bin/redis-cli -h 127.0.0.1 -p 6379</span><br><span class="line">127.0.0.1:6379&gt; ping</span><br><span class="line">PONG</span><br><span class="line">127.0.0.1:6379&gt;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<br/>
+
+<br/>
+
+<h2 id="Redis生产建议"><a href="#Redis生产建议" class="headerlink" title="Redis生产建议"></a>Redis生产建议</h2><h3 id="生产级安装参考"><a href="#生产级安装参考" class="headerlink" title="生产级安装参考"></a>生产级安装参考</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">redis</span><br><span class="line">├── bin</span><br><span class="line">│   ├── redis-benchmark</span><br><span class="line">│   ├── redis-check-aof -&gt; redis-server</span><br><span class="line">│   ├── redis-check-rdb -&gt; redis-server</span><br><span class="line">│   ├── redis-cli</span><br><span class="line">│   ├── redis-sentinel -&gt; redis-server</span><br><span class="line">│   └── redis-server</span><br><span class="line">├── conf</span><br><span class="line">│   └── redis_6379.conf</span><br><span class="line">├── data</span><br><span class="line">├── log</span><br><span class="line">│   └── redis_6379.log</span><br><span class="line">├── run</span><br><span class="line">│   └── redis_6376.pid</span><br><span class="line">└── tls</span><br></pre></td></tr></table></figure>
+
+<br/>
+
+<h3 id="环境变量配置"><a href="#环境变量配置" class="headerlink" title="环境变量配置"></a>环境变量配置</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vim ~/.bash_profile</span><br><span class="line"></span><br><span class="line">PATH=/home/ignacio/redis/bin:$PATH</span><br><span class="line"></span><br><span class="line">source ~/.bash_profile</span><br></pre></td></tr></table></figure>
+
+<br/>
+
+<h3 id="启动-停止脚本书写"><a href="#启动-停止脚本书写" class="headerlink" title="启动&#x2F;停止脚本书写"></a>启动&#x2F;停止脚本书写</h3><ul>
+<li><p>start_6379.sh</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/sh</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">==============================================</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Redis 6379 启动脚本</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">文件名: start_6379.sh</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">说明: 启动指定路径下的 redis-server</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">==============================================</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">切换到脚本所在目录</span></span><br><span class="line">cd `dirname $0`</span><br><span class="line">rpath=`pwd`</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">端口标识</span></span><br><span class="line">portstr=&quot;:6379&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">检查 redis 是否已经运行</span></span><br><span class="line">pid=`ps -ef | grep $rpath | grep $portstr | grep -v &#x27;grep&#x27; | awk &#x27;&#123;print $2&#125;&#x27;`</span><br><span class="line">if [ -n &quot;$pid&quot; ]; then</span><br><span class="line">    echo &quot;Redis is already running, PID: $pid&quot;</span><br><span class="line">    exit 0</span><br><span class="line">fi</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启动 redis-server</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">&#123;rpath&#125;/bin/redis-server <span class="variable">$&#123;rpath&#125;</span>/conf/redis_6379.conf</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">等待几秒再检测</span></span><br><span class="line">sleep 3</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">再次检测是否启动成功</span></span><br><span class="line">pid=`ps -ef | grep $rpath | grep $portstr | grep -v &#x27;grep&#x27; | awk &#x27;&#123;print $2&#125;&#x27;`</span><br><span class="line">if [ -n &quot;$pid&quot; ]; then</span><br><span class="line">    echo &quot;✅ Redis started successfully, PID: $pid&quot;</span><br><span class="line">else</span><br><span class="line">    echo &quot;❌ Redis failed to start&quot;</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>stop_6379.sh</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/sh</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">==============================================</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Redis 6379 停止脚本</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">文件名: stop_6379.sh</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">说明: 停止指定路径下的 redis-server</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">==============================================</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">切换到脚本所在目录</span></span><br><span class="line">cd `dirname $0`</span><br><span class="line">rpath=`pwd`</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">端口标识</span></span><br><span class="line">portstr=&quot;:6379&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查找进程 PID</span></span><br><span class="line">pid=`ps -ef | grep $rpath | grep $portstr | grep -v &#x27;grep&#x27; | awk &#x27;&#123;print $2&#125;&#x27;`</span><br><span class="line"></span><br><span class="line">if [ -n &quot;$pid&quot; ]; then</span><br><span class="line">    echo &quot;🛑 Stopping Redis, PID: $pid&quot;</span><br><span class="line">    kill $pid</span><br><span class="line">    sleep 2</span><br><span class="line">    # 再次确认是否已停止</span><br><span class="line">    pid=`ps -ef | grep $rpath | grep $portstr | grep -v &#x27;grep&#x27; | awk &#x27;&#123;print $2&#125;&#x27;`</span><br><span class="line">    if [ -z &quot;$pid&quot; ]; then</span><br><span class="line">        echo &quot;✅ Redis stopped successfully&quot;</span><br><span class="line">    else</span><br><span class="line">        echo &quot;⚠️  Redis still running, try force kill...&quot;</span><br><span class="line">        kill -9 $pid</span><br><span class="line">    fi</span><br><span class="line">else</span><br><span class="line">    echo &quot;❌ Redis not running&quot;</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>给予脚本可执行权限</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod +x start_6379.sh stop_6379.sh</span><br></pre></td></tr></table></figure></li>
+</ul>
+<br/>
+
+<br/>
+
+<h2 id="安装单机多实例"><a href="#安装单机多实例" class="headerlink" title="安装单机多实例"></a>安装单机多实例</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><ul>
+<li>Redis单机多实例的好处？<ul>
+<li>Redis 默认是 <strong>单线程</strong> 处理请求，单实例只能利用 <strong>一个 CPU 核心</strong></li>
+<li>如果机器有 8 核 CPU，跑 1 个 Redis 就浪费了 CPU；跑 8 个 Redis，可以让每个实例绑定到不同核心，<strong>提升整体吞吐量</strong></li>
+</ul>
+</li>
+</ul>
+<br/>
+
+<h3 id="单机多实例的安装"><a href="#单机多实例的安装" class="headerlink" title="单机多实例的安装"></a>单机多实例的安装</h3><blockquote>
+<p>当前已经有一台Redis实例的情况下，安装多实例</p>
+</blockquote>
+<ul>
+<li>复制配置文件</li>
+</ul>
+  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp redis_6379.conf redis_6380.conf</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>修改配置文件</p>
+<ul>
+<li>方式一：进入 <code>vim redis_6380.conf</code> 命令模式，执行:<code>%s/6379/6380/g</code> 将 6379 进行批量替换为 6380</li>
+<li>方式二：直接用命令 <code>sed -i &#39;s/6379/6380/g&#39; redis_6380.conf</code> 进行替换处理</li>
+</ul>
+</li>
+<li><p>安装确认检查</p>
+<ul>
+<li>操作同单机模式</li>
+</ul>
+</li>
+<li><p>生产级安装参考</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">redis</span><br><span class="line">├── bin</span><br><span class="line">│   ├── redis-benchmark</span><br><span class="line">│   ├── redis-check-aof -&gt; redis-server</span><br><span class="line">│   ├── redis-check-rdb -&gt; redis-server</span><br><span class="line">│   ├── redis-cli</span><br><span class="line">│   ├── redis-sentinel -&gt; redis-server</span><br><span class="line">│   └── redis-server</span><br><span class="line">├── conf</span><br><span class="line">│   ├── redis_6379.conf</span><br><span class="line">│   └── redis_6380.conf</span><br><span class="line">├── data</span><br><span class="line">│   └── dump_6379.rdb</span><br><span class="line">├── log</span><br><span class="line">│   ├── redis_6379.log</span><br><span class="line">│   └── redis_6380.log</span><br><span class="line">├── run</span><br><span class="line">│   └── redis_6376.pid</span><br><span class="line">└── tls</span><br></pre></td></tr></table></figure>
+
+<br/>
+
+<br/>
+
+<br/>
+
+<h1 id="Redis数据类型"><a href="#Redis数据类型" class="headerlink" title="Redis数据类型"></a>Redis数据类型</h1><h2 id="Redis-数据类型一览表（最新版本）"><a href="#Redis-数据类型一览表（最新版本）" class="headerlink" title="Redis 数据类型一览表（最新版本）"></a>Redis 数据类型一览表（最新版本）</h2><table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th>存储结构</th>
+<th>使用场景</th>
+<th>常用命令</th>
+<th>特征说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>String（字符串）</strong></td>
+<td>二进制安全字符串（最大 512MB）</td>
+<td>缓存对象、计数器、分布式锁、JSON 文本</td>
+<td><code>SET</code> <code>GET</code> <code>INCR</code> <code>DECR</code> <code>APPEND</code></td>
+<td>最基础的数据类型，可以存储文本、数字、二进制，支持整型&#x2F;浮点运算</td>
+</tr>
+<tr>
+<td><strong>List（列表）</strong></td>
+<td>双向链表或压缩列表</td>
+<td>消息队列、任务队列、按时间顺序存储数据</td>
+<td><code>LPUSH</code> <code>RPUSH</code> <code>LPOP</code> <code>RPOP</code> <code>LRANGE</code></td>
+<td>有序，可在两端插入&#x2F;弹出元素，适合队列&#x2F;栈操作</td>
+</tr>
+<tr>
+<td><strong>Hash（哈希）</strong></td>
+<td>类似 Map&lt;K,V&gt;，存储字段和值</td>
+<td>存储对象（如用户信息、商品属性）</td>
+<td><code>HSET</code> <code>HGET</code> <code>HDEL</code> <code>HGETALL</code></td>
+<td>类似于小型数据库表，适合存储结构化对象</td>
+</tr>
+<tr>
+<td><strong>Set（集合）</strong></td>
+<td>无序且唯一元素集合</td>
+<td>去重、标签、共同好友计算</td>
+<td><code>SADD</code> <code>SREM</code> <code>SISMEMBER</code> <code>SUNION</code> <code>SINTER</code></td>
+<td>元素自动去重，支持集合间运算（交并差）</td>
+</tr>
+<tr>
+<td><strong>Sorted Set（有序集合 ZSet）</strong></td>
+<td>每个元素带有一个分数 score，按分数排序</td>
+<td>排行榜、优先队列、带权重排序</td>
+<td><code>ZADD</code> <code>ZRANGE</code> <code>ZREM</code> <code>ZINCRBY</code> <code>ZRANK</code></td>
+<td>元素唯一但分数可重复，支持按分数排序和范围查询</td>
+</tr>
+<tr>
+<td><strong>Stream（流）</strong></td>
+<td>消息流结构（类似 Kafka）</td>
+<td>日志系统、消息队列、事件订阅</td>
+<td><code>XADD</code> <code>XREAD</code> <code>XGROUP</code> <code>XREADGROUP</code></td>
+<td>持久化消息队列，支持消费者组，适合日志&#x2F;事件流</td>
+</tr>
+<tr>
+<td><strong>Bitmap（位图）</strong></td>
+<td>位操作，底层基于 String</td>
+<td>用户签到、活跃统计、状态记录</td>
+<td><code>SETBIT</code> <code>GETBIT</code> <code>BITCOUNT</code> <code>BITOP</code></td>
+<td>高效存储布尔状态，一个 bit 代表一个用户&#x2F;状态</td>
+</tr>
+<tr>
+<td><strong>HyperLogLog</strong></td>
+<td>基于概率的数据结构（12KB 固定内存）</td>
+<td>大规模基数统计（UV 去重）</td>
+<td><code>PFADD</code> <code>PFCOUNT</code> <code>PFMERGE</code></td>
+<td>内存占用极小，统计结果是近似值（误差约 0.81%）</td>
+</tr>
+<tr>
+<td><strong>Geospatial（地理空间）</strong></td>
+<td>基于 Sorted Set 实现</td>
+<td>存储地理位置、附近的人&#x2F;店</td>
+<td><code>GEOADD</code> <code>GEODIST</code> <code>GEORADIUS</code></td>
+<td>支持地理坐标存储、范围查询、距离计算</td>
+</tr>
+<tr>
+<td><strong>JSON（模块扩展）</strong></td>
+<td>RedisJSON 提供</td>
+<td>存储和查询 JSON 文档</td>
+<td><code>JSON.SET</code> <code>JSON.GET</code> <code>JSON.DEL</code></td>
+<td>原生支持 JSON 操作，支持路径查询和修改</td>
+</tr>
+<tr>
+<td><strong>TimeSeries（时间序列，模块）</strong></td>
+<td>RedisTimeSeries 提供</td>
+<td>IoT 数据、监控数据、时序指标</td>
+<td><code>TS.ADD</code> <code>TS.RANGE</code> <code>TS.MRANGE</code></td>
+<td>高效存储和查询时间序列，支持聚合与压缩</td>
+</tr>
+<tr>
+<td><strong>Bloom Filter（布隆过滤器，模块）</strong></td>
+<td>RedisBloom 提供</td>
+<td>判断元素是否存在（防止缓存穿透）</td>
+<td><code>BF.ADD</code> <code>BF.EXISTS</code></td>
+<td>占用空间小，支持高效判定，存在一定误判率</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<br/>
+
+<br/>
+
+<br/>
+
+<h1 id="第X章"><a href="#第X章" class="headerlink" title="第X章"></a>第X章</h1><br/>
+
+<br/>
+
+<br/>
+
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><br/>
+
+<br/>
+
+<br/>
+
+<h1 id="remark"><a href="#remark" class="headerlink" title="remark"></a>remark</h1><blockquote>
+<p>1. </p>
+</blockquote>
+<img src='' width='70%' />
+
+
+
+
+                    
+                </div>
+
+                
+                        
+<div class="post-copyright-info-container border-box">
+    <div class="copyright-info-content border-box">
+        <div class="copyright-info-top border-box">
+            <div class="copyright-post-title border-box text-ellipsis">
+                Redis Study Notes
+            </div>
+
+            <div class="copyright-post-link border-box text-ellipsis">
+                2025/Redis-Study-Notes/
+            </div>
+        </div>
+
+        <div class="copyright-info-bottom border-box">
+            <div class="copyright-post-author bottom-item">
+                <div class="type">
+                    Author
+                </div>
+                <div class="content">Ernesto Ignacio</div>
+            </div>
+
+            <div class="post-time bottom-item">
+                <div class="type">
+                    Published
+                </div>
+                <div class="content">2025-09-13 14:47</div>
+            </div>
+
+
+            <div class="post-license bottom-item">
+                <div class="type">
+                    License
+                </div>
+                <div class="content tooltip" data-tooltip-content="CC BY-NC-SA 4.0">
+                    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed" target="_blank">
+                        
+                            <i class="fa-brands fa-creative-commons"></i>
+                            <i class="fa-brands fa-creative-commons-by"></i>
+                            <i class="fa-brands fa-creative-commons-nc"></i>
+                            <i class="fa-brands fa-creative-commons-sa"></i>
+                        
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <i class="copyright-bg fa-solid fa-copyright"></i>
+    </div>
+    <div class="copy-copyright-info flex-center tooltip" data-tooltip-content="Copy copyright info" data-tooltip-offset-y="-2px">
+        <i class="fa-solid fa-copy"></i>
+    </div>
+</div>
+
+                
+
+                <div class="post-bottom-tags-and-share border-box">
+                    <div>
+                        
+                            <ul class="post-tags-box border-box">
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/DataBase/">DataBase</a>
+                                    </li>
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/Redis/">Redis</a>
+                                    </li>
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/NoSQL/">NoSQL</a>
+                                    </li>
+                                
+                            </ul>
+                        
+                    </div>
+                    <div>
+                        
+                            <div class="post-share-container border-box">
+    <ul class="share-list-wrap border-box">
+        <li class="qq share-item border-box flex-center tooltip"
+            data-tooltip-content="Share to QQ"
+        >
+            <i class="fa-brands fa-qq"></i>
+        </li>
+        <li class="wechat share-item border-box flex-center tooltip tooltip-img"
+            data-tooltip-content="Share to WeChat"
+            data-tooltip-img-tip="Scan by WeChat"
+            data-tooltip-img-style="background-color: #fff; top: -10px; padding: 0.6rem 0.6rem 0.1rem 0.6rem;"
+        >
+            <i class="fa-brands fa-weixin"></i>
+        </li>
+        <li class="weibo share-item border-box flex-center tooltip"
+            data-tooltip-content="Share to WeiBo"
+        >
+            <i class="fa-brands fa-weibo"></i>
+        </li>
+    </ul>
+</div>
+
+                        
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="post-nav border-box">
+                        
+                            <div class="prev-post">
+                                <a class="prev"
+                                   rel="prev"
+                                   href="/2025/MySQL-Study-Notes/"
+                                   title="MySQL Study Notes"
+                                >
+                                    <span class="left arrow-icon flex-center">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">MySQL Study Notes</span>
+                                        <span class="post-nav-item">Prev posts</span>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                        
+                            <div class="next-post">
+                                <a class="next"
+                                   rel="next"
+                                   href="/2025/%E3%80%8A%E7%A8%8B%E5%BA%8F%E5%91%98%E8%81%8C%E4%B8%9A%E8%A7%84%E5%88%92%E6%89%8B%E5%86%8C%E3%80%8BStudy-Notes/"
+                                   title="《程序员职业规划手册》Study Notes"
+                                >
+                                    <span class="title flex-center">
+                                        <span class="post-nav-title-item text-ellipsis">《程序员职业规划手册》Study Notes</span>
+                                        <span class="post-nav-item">Next posts</span>
+                                    </span>
+                                    <span class="right arrow-icon flex-center">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        
+                    </div>
+                
+
+                
+                    
+
+
+
+
+
+
+                
+            </div>
+        </div>
+
+        
+            <div class="pc-post-toc right-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis%E4%BB%8B%E7%BB%8D"><span class="nav-text">Redis介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis%E7%AE%80%E4%BB%8B%E4%B8%8E%E5%8A%9F%E8%83%BD%E7%89%B9%E6%80%A7"><span class="nav-text">Redis简介与功能特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-text">Redis 适用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%83%AD%E7%82%B9%E5%8A%A0%E9%80%9F-%E7%BC%93%E5%AD%98%E5%8A%A0%E9%80%9F"><span class="nav-text">热点加速&#x2F;缓存加速</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%BC%9A%E8%AF%9D-%E5%85%B1%E4%BA%AB%E4%BC%9A%E8%AF%9D"><span class="nav-text">分布式会话&#x2F;共享会话</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%9C%BA%E6%99%AF"><span class="nav-text">排行榜场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E6%95%B0%E5%99%A8-%E9%9B%86%E7%BE%A4%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="nav-text">分布式计数器&#x2F;集群计数器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E6%96%B0%E6%B6%88%E6%81%AF"><span class="nav-text">最新消息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E9%99%90%E6%B5%81"><span class="nav-text">请求限流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%AE%9E%E7%8E%B0"><span class="nav-text">分布式锁实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-vs-Memcached"><span class="nav-text">Redis vs Memcached</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-vs-MySQL"><span class="nav-text">Redis vs MySQL</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis%E5%AE%89%E8%A3%85"><span class="nav-text">Redis安装</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%89%8D%E7%BD%AE%E6%9D%A1%E4%BB%B6"><span class="nav-text">安装前置条件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%AF%B4%E6%98%8E"><span class="nav-text">操作系统说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8F%82%E6%95%B0%E8%AE%BE%E7%BD%AE%EF%BC%88%E4%BD%BF%E7%94%A8root%E7%94%A8%E6%88%B7%E8%AE%BE%E7%BD%AE%EF%BC%89"><span class="nav-text">操作系统参数设置（使用root用户设置）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85%EF%BC%88%E5%8D%95%E6%9C%BA%E7%89%88%EF%BC%89%EF%BC%88%E4%BD%BF%E7%94%A8%E6%99%AE%E9%80%9A%E7%94%A8%E6%88%B7%EF%BC%89"><span class="nav-text">源码编译安装（单机版）（使用普通用户）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E8%A7%84%E5%88%92%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-text">目录规划与初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E4%B8%8B%E8%BD%BD%E3%80%81%E7%BC%96%E8%AF%91%E3%80%81%E5%AE%89%E8%A3%85"><span class="nav-text">源码下载、编译、安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis%E9%85%8D%E7%BD%AE"><span class="nav-text">Redis配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis%E5%90%AF%E5%8A%A8%E4%B8%8E%E6%A3%80%E6%9F%A5"><span class="nav-text">Redis启动与检查</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis%E7%94%9F%E4%BA%A7%E5%BB%BA%E8%AE%AE"><span class="nav-text">Redis生产建议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E4%BA%A7%E7%BA%A7%E5%AE%89%E8%A3%85%E5%8F%82%E8%80%83"><span class="nav-text">生产级安装参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E9%85%8D%E7%BD%AE"><span class="nav-text">环境变量配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8-%E5%81%9C%E6%AD%A2%E8%84%9A%E6%9C%AC%E4%B9%A6%E5%86%99"><span class="nav-text">启动&#x2F;停止脚本书写</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%8D%95%E6%9C%BA%E5%A4%9A%E5%AE%9E%E4%BE%8B"><span class="nav-text">安装单机多实例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E6%9C%BA%E5%A4%9A%E5%AE%9E%E4%BE%8B%E7%9A%84%E5%AE%89%E8%A3%85"><span class="nav-text">单机多实例的安装</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-text">Redis数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E4%B8%80%E8%A7%88%E8%A1%A8%EF%BC%88%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC%EF%BC%89"><span class="nav-text">Redis 数据类型一览表（最新版本）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%ACX%E7%AB%A0"><span class="nav-text">第X章</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#remark"><span class="nav-text">remark</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+        </div>
+
+        <div class="page-main-content-bottom border-box">
+            
+<footer class="footer border-box">
+    <div class="copyright-info info-item">
+    &copy;&nbsp;<span>2017</span>&nbsp;-&nbsp;2025
+    
+            &nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;&nbsp;<a href="/">Ernesto Ignacio</a>
+        
+    </div>
+
+    <div class="theme-info info-item">
+        Powered by&nbsp;<a target="_blank" href="https://hexo.io">Hexo</a>&nbsp;&&nbsp;Theme&nbsp;<a class="keep-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep</a>
+    </div>
+
+    
+        
+        <div class="deploy-info info-item">
+            
+            This site is deployed on <span class="tooltip" data-tooltip-content="GitHub Pages"><img src="/images/brands/github.png"></span>
+            
+        </div>
+    
+
+    
+        <div class="count-info info-item">
+            
+                <span class="count-item border-box word">
+                    <span class="item-type border-box">Total words</span>
+                    <span class="item-value border-box word">63.6k</span>
+                </span>
+            
+
+            
+                <span class="count-item border-box uv">
+                    <span class="item-type border-box">Unique Visitor</span>
+                    <span class="item-value border-box uv" id="busuanzi_value_site_uv"></span>
+                </span>
+            
+
+            
+                <span class="count-item border-box pv">
+                    <span class="item-type border-box">Page View</span>
+                    <span class="item-value border-box pv" id="busuanzi_value_site_pv"></span>
+                </span>
+            
+        </div>
+    
+
+    
+</footer>
+
+        </div>
+    </div>
+
+    <!-- post tools -->
+    
+        <div class="post-tools right-toc">
+            <div class="post-tools-container border-box">
+    <ul class="post-tools-list border-box">
+        <!-- PC encrypt again -->
+        
+
+        <!-- PC TOC show toggle -->
+        
+            <li class="tools-item flex-center toggle-show-toc">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        <!-- PC go comment -->
+        
+
+        <!-- PC full screen -->
+        <li class="tools-item flex-center full-screen">
+            <i class="fa-solid fa-expand"></i>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    
+
+    <!-- side tools -->
+    <div class="side-tools">
+        <div class="side-tools-container border-box ">
+    <ul class="side-tools-list side-tools-show-handle border-box">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <!-- toggle mode -->
+        
+
+        <!-- rss -->
+        
+            <li class="tools-item rss flex-center">
+                <a class="flex-center"
+                   href="/atom.xml"
+                   target="_blank"
+                >
+                    <i class="fas fa-rss"></i>
+                </a>
+            </li>
+        
+
+        <!-- to bottom -->
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list border-box">
+        
+            <li class="tools-item toggle-show-toc-tablet flex-center">
+                <i class="fas fa-list"></i>
+            </li>
+        
+
+        
+
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center show-arrow">
+            <i class="arrow fas fa-arrow-up"></i>
+            <span class="percent"></span>
+        </li>
+    </ul>
+</div>
+
+    </div>
+
+    <!-- image mask -->
+    <div class="zoom-in-image-mask">
+    <img class="zoom-in-image">
+</div>
+
+
+    <!-- local search -->
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="Search..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="close-popup-btn">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+    <!-- tablet toc -->
+    
+        <div class="tablet-post-toc-mask">
+            <div class="tablet-post-toc">
+                <div class="post-toc-wrap border-box">
+    <div class="post-toc border-box">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis%E4%BB%8B%E7%BB%8D"><span class="nav-text">Redis介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis%E7%AE%80%E4%BB%8B%E4%B8%8E%E5%8A%9F%E8%83%BD%E7%89%B9%E6%80%A7"><span class="nav-text">Redis简介与功能特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-text">Redis 适用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%83%AD%E7%82%B9%E5%8A%A0%E9%80%9F-%E7%BC%93%E5%AD%98%E5%8A%A0%E9%80%9F"><span class="nav-text">热点加速&#x2F;缓存加速</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%BC%9A%E8%AF%9D-%E5%85%B1%E4%BA%AB%E4%BC%9A%E8%AF%9D"><span class="nav-text">分布式会话&#x2F;共享会话</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%92%E8%A1%8C%E6%A6%9C%E5%9C%BA%E6%99%AF"><span class="nav-text">排行榜场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E6%95%B0%E5%99%A8-%E9%9B%86%E7%BE%A4%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="nav-text">分布式计数器&#x2F;集群计数器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E6%96%B0%E6%B6%88%E6%81%AF"><span class="nav-text">最新消息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E9%99%90%E6%B5%81"><span class="nav-text">请求限流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%AE%9E%E7%8E%B0"><span class="nav-text">分布式锁实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-vs-Memcached"><span class="nav-text">Redis vs Memcached</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-vs-MySQL"><span class="nav-text">Redis vs MySQL</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis%E5%AE%89%E8%A3%85"><span class="nav-text">Redis安装</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%89%8D%E7%BD%AE%E6%9D%A1%E4%BB%B6"><span class="nav-text">安装前置条件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%AF%B4%E6%98%8E"><span class="nav-text">操作系统说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8F%82%E6%95%B0%E8%AE%BE%E7%BD%AE%EF%BC%88%E4%BD%BF%E7%94%A8root%E7%94%A8%E6%88%B7%E8%AE%BE%E7%BD%AE%EF%BC%89"><span class="nav-text">操作系统参数设置（使用root用户设置）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85%EF%BC%88%E5%8D%95%E6%9C%BA%E7%89%88%EF%BC%89%EF%BC%88%E4%BD%BF%E7%94%A8%E6%99%AE%E9%80%9A%E7%94%A8%E6%88%B7%EF%BC%89"><span class="nav-text">源码编译安装（单机版）（使用普通用户）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E8%A7%84%E5%88%92%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-text">目录规划与初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E4%B8%8B%E8%BD%BD%E3%80%81%E7%BC%96%E8%AF%91%E3%80%81%E5%AE%89%E8%A3%85"><span class="nav-text">源码下载、编译、安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis%E9%85%8D%E7%BD%AE"><span class="nav-text">Redis配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis%E5%90%AF%E5%8A%A8%E4%B8%8E%E6%A3%80%E6%9F%A5"><span class="nav-text">Redis启动与检查</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis%E7%94%9F%E4%BA%A7%E5%BB%BA%E8%AE%AE"><span class="nav-text">Redis生产建议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E4%BA%A7%E7%BA%A7%E5%AE%89%E8%A3%85%E5%8F%82%E8%80%83"><span class="nav-text">生产级安装参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E9%85%8D%E7%BD%AE"><span class="nav-text">环境变量配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8-%E5%81%9C%E6%AD%A2%E8%84%9A%E6%9C%AC%E4%B9%A6%E5%86%99"><span class="nav-text">启动&#x2F;停止脚本书写</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%8D%95%E6%9C%BA%E5%A4%9A%E5%AE%9E%E4%BE%8B"><span class="nav-text">安装单机多实例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E6%9C%BA%E5%A4%9A%E5%AE%9E%E4%BE%8B%E7%9A%84%E5%AE%89%E8%A3%85"><span class="nav-text">单机多实例的安装</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-text">Redis数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E4%B8%80%E8%A7%88%E8%A1%A8%EF%BC%88%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC%EF%BC%89"><span class="nav-text">Redis 数据类型一览表（最新版本）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%ACX%E7%AB%A0"><span class="nav-text">第X章</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#remark"><span class="nav-text">remark</span></a></li></ol>
+    </div>
+</div>
+
+            </div>
+        </div>
+    
+</main>
+
+
+
+
+
+<!-- common js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/utils.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/header-shrink.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/back2top.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/toggle-theme.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/code-block.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/main.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/libs/anime.min.js"></script>
+
+<!-- local search -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/local-search.min.js"></script>
+
+
+<!-- lazyload -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/lazyload.min.js"></script>
+
+
+<div class="pjax">
+    <!-- home page -->
+    
+
+    <!-- post page -->
+    
+        <!-- post-helper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/post/post-helper.min.js"></script>
+
+        <!-- toc -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/post/toc.min.js"></script>
+        
+
+        <!-- copyright-info -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/post/copyright-info.min.js"></script>
+        
+
+        <!-- share -->
+        
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/post/share.min.js"></script>
+        
+    
+
+    <!-- categories page -->
+    
+
+    <!-- links page -->
+    
+
+    <!-- photos page -->
+    
+
+    <!-- tools page -->
+    
+</div>
+
+<!-- mermaid -->
+
+    
+<script src="//cdn.jsdelivr.net/npm/mermaid@7.1.2/dist/mermaid.min.js"></script>
+
+    <script data-pjax>
+      if (window.mermaid) {
+        mermaid.init()
+      }
+    </script>
+
+
+
+
+
+
+<!-- pjax -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-theme-keep/4.2.5/js/libs/pjax.min.js"></script>
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart()
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd()
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'))
+            KEEP.initExecute()
+        });
+    });
+</script>
+
+
+
+
+</body>
+</html>
