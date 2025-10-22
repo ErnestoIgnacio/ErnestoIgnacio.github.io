@@ -197,24 +197,48 @@
             
                 <span class="meta-info-item post-update-date">
                     <i class="icon fa-solid fa-file-pen"></i>&nbsp;
-                    <span class="datetime" data-updated="Fri Oct 17 2025 20:47:11 GMT-0500">2025-10-17</span>
+                    <span class="datetime" data-updated="Sat Oct 18 2025 07:56:24 GMT-0500">2025-10-18</span>
                 </span>
             
         
 
         
+            <span class="meta-info-item post-category border-box"><i class="icon fas fa-folder"></i>&nbsp;
+                <ul class="post-category-ul">
+                    
+                            <li class="category-item"><a href="/categories/DataBase/">DataBase</a></li>
+                        
+                    
+                            <li class="category-item">&nbsp;<i class="icon fas fa-angle-right"></i>&nbsp;<a href="/categories/DataBase/MySQL/">MySQL</a></li>
+                        
+                    
+                </ul>
+            </span>
+        
 
+        
+            <span class="post-tag meta-info-item border-box">
+                <ul class="post-tag-ul">
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/DataBase/">DataBase</a></li>
+                        
+                    
+                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/MySQL/">MySQL</a></li>
+                        
+                    
+                </ul>
+            </span>
         
 
         
         
             <span class="meta-info-item post-wordcount">
-                <i class="icon fas fa-file-word"></i>&nbsp;<span>20 Words</span>
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>613 Words</span>
             </span>
         
         
             <span class="meta-info-item post-min2read">
-                <i class="icon fas fa-clock"></i>&nbsp;<span>1 Mins</span>
+                <i class="icon fas fa-clock"></i>&nbsp;<span>2 Mins</span>
             </span>
         
         
@@ -236,17 +260,78 @@
                     
 
                     
-                         <p>文章的概述！显示在首页位置</p>
+                         <p>MySQL配置参数详解</p>
 <span id="more"></span>
 <br/>
 
-<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><br/>
+<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><ul>
+<li>MySQL 8.0有六百多个系统参数</li>
+<li>innodb存储引擎也有自己独立的参数</li>
+</ul>
+<br/>
+
+<br/>
+
+<h1 id="mysql"><a href="#mysql" class="headerlink" title="[mysql]"></a>[mysql]</h1><ul>
+<li>这部分参数只能由mysql命令行客户端读取（不包含mysqladmin，mysqldump）</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># 这部分参数只能由 mysql 命令行客户端读取，不包含mysqladmin，mysqldump</span><br><span class="line">[mysql]</span><br><span class="line">#  指定客户端连接的端口</span><br><span class="line">port = 3306</span><br><span class="line"></span><br><span class="line">#  指定连接socket的位置</span><br><span class="line">socket = /tmp/mysql.sock</span><br><span class="line"></span><br><span class="line">#  使用tab键进行自动补全</span><br><span class="line">auto_rehash</span><br><span class="line"># 注意：当配置auto_rehash参数时，就需要数据库、表、字段信息全部加载到客户端对应的缓存里。这样导致卡顿慢的等问题，间接的给MySQL服务带来负面影响。所以实际运维场景中不建议使用这个参数</span><br><span class="line"># 禁用 auto_rehash参数</span><br><span class="line">no-auto-rehash</span><br><span class="line"></span><br><span class="line"># 在执行 LOAD DATA INFILE 语句时，是否将二进制数据作为十六进制字符串加载到数据库中。如果文件中包含二进制数据，MySQL 默认会将其作为文本字符串加载到数据库中。如果二进制数据中包含了某些特殊字符（例如 NULL 字符），这可能会导致数据加载不完整或格式错误</span><br><span class="line">loose-skip-binary-as-hex</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>使用mysql命令行工具指定 auto_rehash参数</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mysql -uroot -p123456 --auto-rehash</span><br><span class="line"># 或者</span><br><span class="line">mysql -uroot -p123456 -A</span><br><span class="line"></span><br><span class="line">mysql&gt; SELECT t1.id #这里可以按Tab键二次</span><br></pre></td></tr></table></figure>
 
 <br/>
 
 <br/>
 
-<h1 id="第X章"><a href="#第X章" class="headerlink" title="第X章"></a>第X章</h1><br/>
+<br/>
+
+<h1 id="client"><a href="#client" class="headerlink" title="[client]"></a>[client]</h1><ul>
+<li>这部分参数由所有连接的客户端读取(包括所有 mysql、mysqladmin、mysqldump……)</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[client]</span><br><span class="line">user = user1</span><br><span class="line">password = 123456</span><br><span class="line">port = 3306</span><br><span class="line">host = 127.0.0.1</span><br><span class="line"></span><br><span class="line">[mysql]</span><br><span class="line">user = root</span><br><span class="line">password = 123456</span><br><span class="line">port = 3306</span><br><span class="line">prompt = [\u@\p][\d\]&gt;</span><br></pre></td></tr></table></figure>
+
+<br/>
+
+<br/>
+
+<br/>
+
+<h1 id="mysql-VS-client"><a href="#mysql-VS-client" class="headerlink" title="[mysql] VS [client]"></a>[mysql] VS [client]</h1><ul>
+<li>[mysql] 里的参数只能由命令行mysql读取</li>
+<li>[client] 里的参数可以由所有mysql的客户端（mysql、mysqladmin、mysqldump……）读取</li>
+<li>[mysql],[client]都是可以被mysql客户端读取的，两者都配置了一样的参数时，遵循覆盖原则，选取最下面的</li>
+<li>MySQL的客户端都是可以在命令行指定连接参数的，如配置文件的参数错误，可直接在命令行输入该参数覆盖参数文件参数</li>
+</ul>
+<br/>
+
+<br/>
+
+<br/>
+
+<h1 id="mysqldump"><a href="#mysqldump" class="headerlink" title="[mysqldump]"></a>[mysqldump]</h1><ul>
+<li>这部分参数由名为 mysqldump 备份工具读取</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 快速导出。该选项用于转储大的表，它强制mysqldump从服务器一次一行地检索表中的行而不是检索所有行并在输出前将它缓存到内存中。</span><br><span class="line">quick</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="mysqld"><a href="#mysqld" class="headerlink" title="[mysqld]"></a>[mysqld]</h1><ul>
+<li>这部分由 mysql 服务器读取</li>
+</ul>
+<h2 id="基础设置"><a href="#基础设置" class="headerlink" title="基础设置"></a>基础设置</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">```</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## 系统资源相关设置</span><br><span class="line"></span><br><span class="line">```mysql</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+<br/>
 
 <br/>
 
@@ -328,6 +413,18 @@
                 <div class="post-bottom-tags-and-share border-box">
                     <div>
                         
+                            <ul class="post-tags-box border-box">
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/DataBase/">DataBase</a>
+                                    </li>
+                                
+                                    <li class="tag-item border-box">
+                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/MySQL/">MySQL</a>
+                                    </li>
+                                
+                            </ul>
+                        
                     </div>
                     <div>
                         
@@ -398,7 +495,7 @@
             <div class="pc-post-toc right-toc">
                 <div class="post-toc-wrap border-box">
     <div class="post-toc border-box">
-        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%ACX%E7%AB%A0"><span class="nav-text">第X章</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#remark"><span class="nav-text">remark</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mysql"><span class="nav-text">[mysql]</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#client"><span class="nav-text">[client]</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mysql-VS-client"><span class="nav-text">[mysql] VS [client]</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mysqldump"><span class="nav-text">[mysqldump]</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mysqld"><span class="nav-text">[mysqld]</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E8%AE%BE%E7%BD%AE"><span class="nav-text">基础设置</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#remark"><span class="nav-text">remark</span></a></li></ol>
     </div>
 </div>
 
@@ -440,7 +537,7 @@
             
                 <span class="count-item border-box word">
                     <span class="item-type border-box">Total words</span>
-                    <span class="item-value border-box word">65.8k</span>
+                    <span class="item-value border-box word">68.5k</span>
                 </span>
             
 
@@ -593,7 +690,7 @@
             <div class="tablet-post-toc">
                 <div class="post-toc-wrap border-box">
     <div class="post-toc border-box">
-        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%ACX%E7%AB%A0"><span class="nav-text">第X章</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#remark"><span class="nav-text">remark</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mysql"><span class="nav-text">[mysql]</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#client"><span class="nav-text">[client]</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mysql-VS-client"><span class="nav-text">[mysql] VS [client]</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mysqldump"><span class="nav-text">[mysqldump]</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mysqld"><span class="nav-text">[mysqld]</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E8%AE%BE%E7%BD%AE"><span class="nav-text">基础设置</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#remark"><span class="nav-text">remark</span></a></li></ol>
     </div>
 </div>
 
