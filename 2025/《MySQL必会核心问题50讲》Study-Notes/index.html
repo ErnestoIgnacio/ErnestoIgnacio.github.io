@@ -9,7 +9,7 @@
     
     <title>
         
-            程序员基石必修课，计算机网络底层原理 Study Notes |
+            《MySQL必会核心问题50讲》Study Notes |
         
         Ernesto Ignacio&#39;s Blog
     </title>
@@ -165,7 +165,7 @@
             <div class="post-content-bottom border-box">
                 
                     <div class="post-title">
-                        程序员基石必修课，计算机网络底层原理 Study Notes
+                        《MySQL必会核心问题50讲》Study Notes
                     </div>
                 
 
@@ -191,43 +191,25 @@
         
             <span class="meta-info-item post-create-date">
                 <i class="icon fa-solid fa-calendar-plus"></i>&nbsp;
-                <span class="datetime">2025-05-11</span>
+                <span class="datetime">2025-10-25</span>
             </span>
 
             
                 <span class="meta-info-item post-update-date">
                     <i class="icon fa-solid fa-file-pen"></i>&nbsp;
-                    <span class="datetime" data-updated="Thu Oct 09 2025 08:38:49 GMT-0500">2025-10-09</span>
+                    <span class="datetime" data-updated="Sat Oct 25 2025 13:06:33 GMT-0500">2025-10-25</span>
                 </span>
             
         
 
         
-            <span class="meta-info-item post-category border-box"><i class="icon fas fa-folder"></i>&nbsp;
-                <ul class="post-category-ul">
-                    
-                            <li class="category-item"><a href="/categories/Network/">Network</a></li>
-                        
-                    
-                </ul>
-            </span>
-        
 
-        
-            <span class="post-tag meta-info-item border-box">
-                <ul class="post-tag-ul">
-                    
-                            <li class="tag-item"><span class="tag-separator"><i class="icon fas fa-hashtag"></i></span><a href="/tags/Network/">Network</a></li>
-                        
-                    
-                </ul>
-            </span>
         
 
         
         
             <span class="meta-info-item post-wordcount">
-                <i class="icon fas fa-file-word"></i>&nbsp;<span>446 Words</span>
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>20 Words</span>
             </span>
         
         
@@ -254,63 +236,17 @@
                     
 
                     
-                         <p>慕课网课程[《程序员基石必修课，计算机网络底层原理》]（<a class="link"   target="_blank" rel="noopener" href="https://coding.imooc.com/class/765.html%EF%BC%89%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0" >https://coding.imooc.com/class/765.html）学习笔记<i class="fas fa-external-link-alt"></i></a></p>
+                         <p>文章的概述！显示在首页位置</p>
 <span id="more"></span>
 <br/>
 
-<h1 id="第1章-课程介绍"><a href="#第1章-课程介绍" class="headerlink" title="第1章 课程介绍"></a>第1章 课程介绍</h1><h2 id="如何学习"><a href="#如何学习" class="headerlink" title="如何学习"></a>如何学习</h2><ul>
-<li>搞清楚各层主要解决了什么问题，是怎么解决的</li>
-<li>常用协议主要解决了什么问题，是怎么解决的</li>
-<li>物理层、链路层和网络层的相关协议是基石</li>
-<li>运输层的 TCP 和 UDP 协议承上启下</li>
-<li>应用层的协议离我们程序员最近，是重中之重</li>
-</ul>
-<br/>
+<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><br/>
 
 <br/>
 
 <br/>
 
-<h1 id="第2章-初识计算机网络"><a href="#第2章-初识计算机网络" class="headerlink" title="第2章 初识计算机网络"></a>第2章 初识计算机网络</h1><h2 id="协议"><a href="#协议" class="headerlink" title="协议"></a>协议</h2><ul>
-<li>约定发送方要怎么发送，接收方该如何接收</li>
-<li>协议的本质就是共同遵守的约定</li>
-<li>传输不同类型的数据，需要不同的协议<ul>
-<li>HTTP：超文本</li>
-<li>FTP：文件</li>
-<li>SMTP、POP3、IMAP：邮件</li>
-</ul>
-</li>
-<li>不同的协议有不同的约定</li>
-</ul>
-<br/>
-
-<br/>
-
-<h2 id="计算机网络协议分层"><a href="#计算机网络协议分层" class="headerlink" title="计算机网络协议分层"></a>计算机网络协议分层</h2><img src='https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/image.6ikitjfv96.webp' width='100%' />
-
-<ul>
-<li>应用层：解决特定网络应用的问题</li>
-<li>运输层：解决进程之间基于网络的通信问题</li>
-<li>网络层：解决数据包在多个网络之间传输和路由的问题</li>
-<li>数据链路层：解决数据包在一个网络或一段链路上传输的问题</li>
-<li>物理层：解决使用何种信号来表示比特 0和1的问题</li>
-</ul>
-<img src='https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/image.73u6fujn93.webp' width='100%' />
-
-<ul>
-<li>协议是计算机网络的基石，其本质就是共同遵守的约定</li>
-<li>分层思想将复杂的问题转化为若干较小的问题，各层也可以独立演化发展</li>
-<li>发送数据时，从上层到下层，层层封装</li>
-<li>接收数据时，从下层到上层，层层解封</li>
-<li>网络上的数据包，可以没有上层，但不能没有下层</li>
-</ul>
-<br/>
-
-<br/>
-
-<br/>
-
-<h1 id="第3章-物理层和数据链路层"><a href="#第3章-物理层和数据链路层" class="headerlink" title="第3章 物理层和数据链路层"></a>第3章 物理层和数据链路层</h1><br/>
+<h1 id="第X章"><a href="#第X章" class="headerlink" title="第X章"></a>第X章</h1><br/>
 
 <br/>
 
@@ -339,11 +275,11 @@
     <div class="copyright-info-content border-box">
         <div class="copyright-info-top border-box">
             <div class="copyright-post-title border-box text-ellipsis">
-                程序员基石必修课，计算机网络底层原理 Study Notes
+                《MySQL必会核心问题50讲》Study Notes
             </div>
 
             <div class="copyright-post-link border-box text-ellipsis">
-                2025/程序员基石必修课，计算机网络底层原理-Study-Notes/
+                2025/《MySQL必会核心问题50讲》Study-Notes/
             </div>
         </div>
 
@@ -359,7 +295,7 @@
                 <div class="type">
                     Published
                 </div>
-                <div class="content">2025-05-11 20:17</div>
+                <div class="content">2025-10-25 13:06</div>
             </div>
 
 
@@ -391,14 +327,6 @@
 
                 <div class="post-bottom-tags-and-share border-box">
                     <div>
-                        
-                            <ul class="post-tags-box border-box">
-                                
-                                    <li class="tag-item border-box">
-                                        <i class="icon fas fa-hashtag"></i>&nbsp;<a href="/tags/Network/">Network</a>
-                                    </li>
-                                
-                            </ul>
                         
                     </div>
                     <div>
@@ -434,31 +362,15 @@
                 
                     <div class="post-nav border-box">
                         
-                            <div class="prev-post">
-                                <a class="prev"
-                                   rel="prev"
-                                   href="/2025/%E6%BC%AB%E7%94%BBSQL-MySQL%E5%BF%85%E4%BF%AE%E8%AF%BE-Study-Notes/"
-                                   title="漫画SQL MySQL必修课 Study Notes"
-                                >
-                                    <span class="left arrow-icon flex-center">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </span>
-                                    <span class="title flex-center">
-                                        <span class="post-nav-title-item text-ellipsis">漫画SQL MySQL必修课 Study Notes</span>
-                                        <span class="post-nav-item">Prev posts</span>
-                                    </span>
-                                </a>
-                            </div>
-                        
                         
                             <div class="next-post">
                                 <a class="next"
                                    rel="next"
-                                   href="/2025/Gin-Web-Framework-Study-Notes/"
-                                   title="Gin Web Framework Study Notes"
+                                   href="/2025/MySQL%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3/"
+                                   title="MySQL配置参数详解"
                                 >
                                     <span class="title flex-center">
-                                        <span class="post-nav-title-item text-ellipsis">Gin Web Framework Study Notes</span>
+                                        <span class="post-nav-title-item text-ellipsis">MySQL配置参数详解</span>
                                         <span class="post-nav-item">Next posts</span>
                                     </span>
                                     <span class="right arrow-icon flex-center">
@@ -486,7 +398,7 @@
             <div class="pc-post-toc right-toc">
                 <div class="post-toc-wrap border-box">
     <div class="post-toc border-box">
-        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC1%E7%AB%A0-%E8%AF%BE%E7%A8%8B%E4%BB%8B%E7%BB%8D"><span class="nav-text">第1章 课程介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%AD%A6%E4%B9%A0"><span class="nav-text">如何学习</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC2%E7%AB%A0-%E5%88%9D%E8%AF%86%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C"><span class="nav-text">第2章 初识计算机网络</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE"><span class="nav-text">协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE%E5%88%86%E5%B1%82"><span class="nav-text">计算机网络协议分层</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC3%E7%AB%A0-%E7%89%A9%E7%90%86%E5%B1%82%E5%92%8C%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82"><span class="nav-text">第3章 物理层和数据链路层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#remark"><span class="nav-text">remark</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%ACX%E7%AB%A0"><span class="nav-text">第X章</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#remark"><span class="nav-text">remark</span></a></li></ol>
     </div>
 </div>
 
@@ -681,7 +593,7 @@
             <div class="tablet-post-toc">
                 <div class="post-toc-wrap border-box">
     <div class="post-toc border-box">
-        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC1%E7%AB%A0-%E8%AF%BE%E7%A8%8B%E4%BB%8B%E7%BB%8D"><span class="nav-text">第1章 课程介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%AD%A6%E4%B9%A0"><span class="nav-text">如何学习</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC2%E7%AB%A0-%E5%88%9D%E8%AF%86%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C"><span class="nav-text">第2章 初识计算机网络</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE"><span class="nav-text">协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE%E5%88%86%E5%B1%82"><span class="nav-text">计算机网络协议分层</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC3%E7%AB%A0-%E7%89%A9%E7%90%86%E5%B1%82%E5%92%8C%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82"><span class="nav-text">第3章 物理层和数据链路层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#remark"><span class="nav-text">remark</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%ACX%E7%AB%A0"><span class="nav-text">第X章</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#remark"><span class="nav-text">remark</span></a></li></ol>
     </div>
 </div>
 

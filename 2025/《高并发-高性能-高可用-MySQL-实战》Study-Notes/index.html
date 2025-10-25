@@ -197,7 +197,7 @@
             
                 <span class="meta-info-item post-update-date">
                     <i class="icon fa-solid fa-file-pen"></i>&nbsp;
-                    <span class="datetime" data-updated="Sun Oct 19 2025 22:08:19 GMT-0500">2025-10-19</span>
+                    <span class="datetime" data-updated="Sat Oct 25 2025 12:49:39 GMT-0500">2025-10-25</span>
                 </span>
             
         
@@ -233,12 +233,12 @@
         
         
             <span class="meta-info-item post-wordcount">
-                <i class="icon fas fa-file-word"></i>&nbsp;<span>3.7k Words</span>
+                <i class="icon fas fa-file-word"></i>&nbsp;<span>5.9k Words</span>
             </span>
         
         
             <span class="meta-info-item post-min2read">
-                <i class="icon fas fa-clock"></i>&nbsp;<span>13 Mins</span>
+                <i class="icon fas fa-clock"></i>&nbsp;<span>22 Mins</span>
             </span>
         
         
@@ -650,6 +650,8 @@
 <li>MySQL 从磁盘读取或写入数据时，不是一行一行地读写，而是 <strong>以页为单位（Page I&#x2F;O）</strong>，默认页大小：<code>16KB</code>（可配置为 4KB、8KB、32KB、64KB，但绝大多数系统使用16KB）</li>
 <li>页太大 → 浪费I&#x2F;O与内存，降低并发；页太小 → 管理成本高，I&#x2F;O放大；16KB 是在磁盘页（4KB）、系统内存、I&#x2F;O 特性、B+树性能之间的一个最佳平衡点。<br> 几乎所有主流数据库（Oracle、PostgreSQL、SQL Server）也采用类似的默认页大小</li>
 </ul>
+<img src='https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/image.70aqkq2cg9.webp' width='70%' />
+
 <br/>
 
 <h3 id="为什么页不能太大（比如-16MB）"><a href="#为什么页不能太大（比如-16MB）" class="headerlink" title="为什么页不能太大（比如 16MB）?"></a>为什么页不能太大（比如 16MB）?</h3><h4 id="I-O效率问题"><a href="#I-O效率问题" class="headerlink" title="I&#x2F;O效率问题"></a>I&#x2F;O效率问题</h4><ul>
@@ -728,7 +730,412 @@
 
 <br/>
 
-<h2 id="InnoDB数据行长什么样"><a href="#InnoDB数据行长什么样" class="headerlink" title="InnoDB数据行长什么样"></a>InnoDB数据行长什么样</h2><br/>
+<h2 id="InnoDB数据行长什么样"><a href="#InnoDB数据行长什么样" class="headerlink" title="InnoDB数据行长什么样"></a>InnoDB数据行长什么样</h2><h3 id="InnoDB中的变长列有哪些？"><a href="#InnoDB中的变长列有哪些？" class="headerlink" title="InnoDB中的变长列有哪些？"></a>InnoDB中的变长列有哪些？</h3><ul>
+<li>长度不固定的数据类型：<ul>
+<li>VARCHAR</li>
+<li>VARBINARY</li>
+<li>BLOB</li>
+<li>TEXT</li>
+</ul>
+</li>
+<li>占用空间大于768Byte的不变长类型：CHAR</li>
+<li>CHAR（在变长编码下）</li>
+</ul>
+<br/>
+
+<h3 id="行溢出数据"><a href="#行溢出数据" class="headerlink" title="行溢出数据"></a>行溢出数据</h3><ul>
+<li>由于InnoDB每个数据页容量有限，导致数据字段也是有限的</li>
+<li>当数据字段过大时，InnoDB会使用行溢出机制</li>
+<li>行溢出机制会把超长字段放入单独开辟的数据页</li>
+</ul>
+<img src='https://github.com/ErnestoIgnacio/picx-images-hosting/raw/master/ErnestoIgnacioBlog/image.26lvn3xlaq.webp' width='70%' />
+
+
+
+<br/>
+
+<h3 id="InnoDB-行记录格式-Row-Format"><a href="#InnoDB-行记录格式-Row-Format" class="headerlink" title="InnoDB 行记录格式 Row Format"></a>InnoDB 行记录格式 Row Format</h3><ul>
+<li>InnoDB 行记录格式主要分为两个时代（4种类型）：<ul>
+<li><strong>Redundant &#x2F; Compact</strong>（Antelope 文件格式）</li>
+<li><strong>Dynamic &#x2F; Compressed</strong>（Barracuda 文件格式）</li>
+</ul>
+</li>
+<li>行记录格式进化的核心需求是节约行记录空间，从而增加每页可容纳的数据行数，最终提高查询效率。</li>
+</ul>
+<h4 id="Redundant"><a href="#Redundant" class="headerlink" title="Redundant"></a>Redundant</h4><ul>
+<li>MySQL5.0之前默认的Row Format</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center">字段偏移列表</th>
+<th align="center">Header</th>
+<th align="center">RowID</th>
+<th align="center">TxID</th>
+<th align="center">Roll Pointer</th>
+<th align="center">Col 1</th>
+<th align="center">Col 1</th>
+<th align="center">……</th>
+<th>Col n</th>
+</tr>
+</thead>
+</table>
+<table>
+<thead>
+<tr>
+<th align="center">Redundant Row Format</th>
+<th>explanation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>字段偏移列表</strong></td>
+<td>用来记录每个字段的相对位置，按照列的顺序逆序放置</td>
+</tr>
+<tr>
+<td align="center"><strong>Header</strong></td>
+<td>列数量、字段偏移表的单位、下一行记录的指针等信息</td>
+</tr>
+<tr>
+<td align="center"><strong>RowID</strong></td>
+<td>没有可用的主键时，使用RowID作为隐藏主键</td>
+</tr>
+<tr>
+<td align="center"><strong>TxID</strong></td>
+<td>Transaction ID &#x2F; 事务ID</td>
+</tr>
+<tr>
+<td align="center"><strong>Roll Pointer</strong></td>
+<td>回滚指针</td>
+</tr>
+<tr>
+<td align="center"><strong>Col xxx</strong></td>
+<td>数据（未溢出）<br/>数据（溢出）：前768Byte数据+BLOB页指针</td>
+</tr>
+</tbody></table>
+<h4 id="Compact"><a href="#Compact" class="headerlink" title="Compact"></a>Compact</h4><ul>
+<li>MySQL5.1 默认Row Format</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center">变长字段长度表</th>
+<th align="center">Null标志位</th>
+<th align="center">Header</th>
+<th align="center">RowID</th>
+<th align="center">TxID</th>
+<th align="center">Roll Pointer</th>
+<th align="center">Col 1</th>
+<th align="center">Col 2</th>
+<th>……</th>
+<th>Col n</th>
+</tr>
+</thead>
+</table>
+<table>
+<thead>
+<tr>
+<th align="center">Compact Row Format</th>
+<th>explanation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>变长字段长度表</strong></td>
+<td>每个变长字段的长度；按照列的顺序逆序放置</td>
+</tr>
+<tr>
+<td align="center"><strong>Null标志位</strong></td>
+<td>指示行记录中的NULL值，每个bit代表一个字段</td>
+</tr>
+<tr>
+<td align="center"><strong>Header</strong></td>
+<td>列数量、字段偏移表的单位、下一行记录的指针等信息</td>
+</tr>
+<tr>
+<td align="center"><strong>RowID</strong></td>
+<td>没有可用的主键时，使用RowID作为隐藏主键</td>
+</tr>
+<tr>
+<td align="center"><strong>TxID</strong></td>
+<td>Transaction ID &#x2F; 事务ID</td>
+</tr>
+<tr>
+<td align="center"><strong>Roll Pointer</strong></td>
+<td>回滚指针</td>
+</tr>
+<tr>
+<td align="center"><strong>Col xxx</strong></td>
+<td>数据（未溢出）<br/>数据（溢出）：前768Byte数据+BLOB页指针</td>
+</tr>
+</tbody></table>
+<h4 id="Dynamic"><a href="#Dynamic" class="headerlink" title="Dynamic"></a>Dynamic</h4><ul>
+<li>MySQL5.7 之后默认的Row Format</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center">变长字段长度表</th>
+<th align="center">Null标志位</th>
+<th align="center">Header</th>
+<th align="center">RowID</th>
+<th align="center">TxID</th>
+<th align="center">Roll Pointer</th>
+<th align="center">Col 1</th>
+<th align="center">Col 2</th>
+<th>……</th>
+<th>Col n</th>
+</tr>
+</thead>
+</table>
+<table>
+<thead>
+<tr>
+<th align="center">Dynamic Row Format</th>
+<th>explanation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>Col xxx</strong></td>
+<td>数据长度大于40Byte直接溢出，只记录BLOB页指针</td>
+</tr>
+</tbody></table>
+<h4 id="Compressed"><a href="#Compressed" class="headerlink" title="Compressed"></a>Compressed</h4><ul>
+<li>物理结构上与Dynamic类似</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center">变长字段长度表</th>
+<th align="center">Null标志位</th>
+<th align="center">Header</th>
+<th align="center">RowID</th>
+<th align="center">TxID</th>
+<th align="center">Roll Pointer</th>
+<th align="center">Col 1</th>
+<th align="center">Col 2</th>
+<th>……</th>
+<th>Col n</th>
+</tr>
+</thead>
+</table>
+<table>
+<thead>
+<tr>
+<th align="center">Compressed Row Format</th>
+<th>explanation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>Col xxx</strong></td>
+<td>对表的数据行使用 zlib 算法压缩存储<br/>可节约约 40 % 空间，但 CPU 压力较大</td>
+</tr>
+</tbody></table>
+<br/>
+
+<br/>
+
+<h2 id="索引有哪些左侧用法"><a href="#索引有哪些左侧用法" class="headerlink" title="索引有哪些左侧用法"></a>索引有哪些左侧用法</h2><h3 id="联合索引"><a href="#联合索引" class="headerlink" title="联合索引"></a>联合索引</h3><ul>
+<li>使用两个或以上字段生成的索引</li>
+<li>可加速“最左前缀”查询</li>
+<li>联合索引可以代替最左侧字段的单独索引</li>
+<li>使用原则：<ul>
+<li><strong>带头大哥不能死</strong>（最左字段必须出现）</li>
+<li><strong>中间兄弟不能丢</strong>（中间字段不能跳过）</li>
+</ul>
+</li>
+</ul>
+<br/>
+
+<h3 id="字符串的前缀索引"><a href="#字符串的前缀索引" class="headerlink" title="字符串的前缀索引"></a>字符串的前缀索引</h3><ul>
+<li>如果字符串过长，可使用前缀索引节约空间</li>
+<li>若前缀区分度太小，可考虑：<ul>
+<li>倒序存储</li>
+<li>新增 Hash 字段</li>
+</ul>
+</li>
+<li>字符串的前缀索引可以节约硬盘空间</li>
+</ul>
+<br/>
+
+<h3 id="字符串-LIKE-查询与索引"><a href="#字符串-LIKE-查询与索引" class="headerlink" title="字符串 LIKE 查询与索引"></a>字符串 LIKE 查询与索引</h3><ul>
+<li><code>LIKE &#39;%关键字%&#39;</code> 和 <code>LIKE &#39;%关键字&#39;</code>：会使索引失效</li>
+<li><code>LIKE &#39;关键字%&#39;</code>（左模糊）：可以有效使用索引</li>
+</ul>
+<br/>
+
+<br/>
+
+<h2 id="如何约束数据"><a href="#如何约束数据" class="headerlink" title="如何约束数据"></a>如何约束数据</h2><h3 id="InnoDB约束数据的方法"><a href="#InnoDB约束数据的方法" class="headerlink" title="InnoDB约束数据的方法"></a>InnoDB约束数据的方法</h3><ul>
+<li>Primary Key &#x2F; Unique Key</li>
+<li>Foreign Key</li>
+<li>Default &#x2F; NOT NULL</li>
+<li>触发器</li>
+</ul>
+<br/>
+
+<h3 id="Primary-Key-Unique-Key"><a href="#Primary-Key-Unique-Key" class="headerlink" title="Primary Key &#x2F; Unique Key"></a>Primary Key &#x2F; Unique Key</h3><ul>
+<li>通过将数据字段设置为索引，约束数据内容</li>
+<li><strong>Primary Key</strong>：唯一，不为 NULL</li>
+<li><strong>Unique Key</strong>：唯一</li>
+<li>唯一约束插入时的性能开销较大</li>
+</ul>
+<br/>
+
+<h3 id="Foreign-Key"><a href="#Foreign-Key" class="headerlink" title="Foreign Key"></a>Foreign Key</h3><ul>
+<li>外键可以对数据的正确性实现约束</li>
+<li>实际生产中很少使用，因为影响性能，一般使用业务逻辑去约束</li>
+</ul>
+<br/>
+
+<h3 id="Default-NOT-NULL"><a href="#Default-NOT-NULL" class="headerlink" title="Default &#x2F; NOT NULL"></a>Default &#x2F; NOT NULL</h3><ul>
+<li><p><strong>Default</strong>：数据默认值</p>
+</li>
+<li><p><strong>NOT NULL</strong>：数据不为空</p>
+<ul>
+<li>实际生产推荐开启，因为如果字段为null，是不会加入索引的，最终会影响查询性能</li>
+<li>NOT NULL 的行为可能受到 SQL mode 参数的影响</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 查看是否开启了严格模式</span><br><span class="line"># 如果没有开启严格模式 NOT NULL 会失效</span><br><span class="line">SHOW VARIABLES LIKE &#x27;innodb_strict_mode&#x27;;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<br/>
+
+<h3 id="触发器"><a href="#触发器" class="headerlink" title="触发器"></a>触发器</h3><ul>
+<li>插入、修改数据时，使用触发器校验数据</li>
+<li>容易干扰业务，使用很少</li>
+</ul>
+<br/>
+
+<br/>
+
+<h2 id="View（如何使用不存在的数据表）"><a href="#View（如何使用不存在的数据表）" class="headerlink" title="View（如何使用不存在的数据表）"></a>View（如何使用不存在的数据表）</h2><ul>
+<li>使用视图可以创建不存在的虚拟表</li>
+<li>视图的原理是预设一个 SELECT 语句</li>
+<li>SELECT 语句的查询结果作为虚拟表的数据</li>
+<li>视图算法的选择<ul>
+<li><strong>MERGE</strong>：将视图 SQL 合并到主查询 SQL 中（一般来讲，<strong>MERGE 的性能优于 TEMPTABLE</strong>）（<strong>尽量使用 MERGE 算法，并避免无法使用 MERGE 的 SQL</strong>）</li>
+<li><strong>TEMPTABLE</strong>：将视图作为临时表（中间结果）来处理</li>
+</ul>
+</li>
+<li>无法使用 MERGE 的 SQL<ul>
+<li>聚集函数</li>
+<li>DISTINCT</li>
+<li>GROUP BY</li>
+<li>HAVING</li>
+<li>UNION、UNION ALL</li>
+<li>子查询</li>
+</ul>
+</li>
+</ul>
+<br/>
+
+<br/>
+
+<h2 id="总结（理论-实践）"><a href="#总结（理论-实践）" class="headerlink" title="总结（理论-实践）"></a>总结（理论-实践）</h2><ul>
+<li>增加每页数据量：<ul>
+<li>尽量做到<strong>冷热数据分离</strong>，减小表的宽度</li>
+<li>优先选择符合存储需要的<strong>最小的数据类型</strong></li>
+</ul>
+</li>
+<li>避免行溢出：<ul>
+<li>把 <strong>BLOB 或 TEXT</strong> 列分离到单独的扩展表中</li>
+<li><strong>禁止</strong>在数据库中存储<strong>图片、文件等大的二进制数据</strong></li>
+</ul>
+</li>
+<li>控制 B+ 树高度：<ul>
+<li>尽量控制单表数据量的大小，<strong>建议控制在 500 万以内</strong></li>
+</ul>
+</li>
+</ul>
+<br/>
+
+<br/>
+
+<br/>
+
+<h1 id="第5章-怎么查询速度更快"><a href="#第5章-怎么查询速度更快" class="headerlink" title="第5章 怎么查询速度更快"></a>第5章 怎么查询速度更快</h1><h2 id="安装示例数据库sakila"><a href="#安装示例数据库sakila" class="headerlink" title="安装示例数据库sakila"></a>安装示例数据库sakila</h2><ul>
+<li>Sakila 是 MySQL 中的一个示例数据库（sample database）</li>
+<li>Sakila 展示了一个电影 DVD 租赁公司的后台管理系统</li>
+<li>很多国外教程都使用了 Sakila 作为案例</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">wget https://downloads.mysql.com/docs/sakila-db.tar.gz</span><br><span class="line"></span><br><span class="line">tar -xvf sakila-db.tar.gz</span><br><span class="line"></span><br><span class="line">source /usr/local/src/sakila-db/sakila-schema.sql</span><br><span class="line"></span><br><span class="line">source /usr/local/src/sakila-db/sakila-data.sql</span><br></pre></td></tr></table></figure>
+
+<br/>
+
+<br/>
+
+<h2 id="覆盖索引"><a href="#覆盖索引" class="headerlink" title="覆盖索引"></a>覆盖索引</h2><ul>
+<li>覆盖索引指的是：查询语句从执行到返回结果均使用同一索引<ul>
+<li>即查询计划中 Extra字段是 Using index</li>
+</ul>
+</li>
+<li>覆盖索引通过取消回表操作，提升查询效率</li>
+<li>若数据的查询不只使用了一个索引，则不是覆盖索引</li>
+<li>可以通过优化 SQL 语句或优化联合索引，来使用覆盖索引（代价是增加存储空间）</li>
+</ul>
+<br/>
+
+<br/>
+
+<h2 id="如何确定用哪条索引"><a href="#如何确定用哪条索引" class="headerlink" title="如何确定用哪条索引"></a>如何确定用哪条索引</h2><ul>
+<li>MySQL的Server层在选取索引时，会参考索引的基数（Cardinality），基数是 MySQL 估算的，反映这个字段有多少种取值，选取几个页算出取值的平均值，再乘以页数，即为基数（也可以理解为区分度）</li>
+<li>根据索引基数，可以判断索引性能的好坏</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 查看Cardinality（区分度）</span><br><span class="line">show index from inventory;</span><br><span class="line"></span><br><span class="line"># 使用 force index 可以强制使用索引</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>优化索引<ul>
+<li>analyze table 可以重新统计索引信息，重新统计索引信息时，会重新计算索引的基数</li>
+</ul>
+</li>
+</ul>
+<br/>
+
+<br/>
+
+<h2 id="MySQL-count-函数"><a href="#MySQL-count-函数" class="headerlink" title="MySQL count() 函数"></a>MySQL count() 函数</h2><ul>
+<li>MySQL count() 函数用来统计结果集中不为 null 的数据个数<ul>
+<li>首先存储引擎查询出结果集</li>
+<li>server 层逐个结果判断是否为 null，不为 null 则加 1</li>
+</ul>
+</li>
+<li>count(非索引字段) 时，server 层需要判断每个数据是否为 null，而且查询本身无法使用覆盖索引，理论上最慢</li>
+<li>count(索引字段) 可以使用覆盖索引，但依然需要每次判断字段是否为 null</li>
+<li>count(1) 只扫描索引树，没有解析数据行的过程，理论上更快，但 server 层依然每次需要判断 “1 是否为 null”</li>
+<li>count(*) 一般用来返回数据表行数<ul>
+<li>MyISAM 的 count(*) 直接返回数据库中记录的数据表行数</li>
+<li>由于 InnoDB 支持事务，数据库中不记录数据表行数</li>
+<li>MySQL 专门优化了 count(*) 函数，直接返回索引树中数据的个数</li>
+</ul>
+</li>
+</ul>
+<br/>
+
+<br/>
+
+<h2 id="ORDER-BY"><a href="#ORDER-BY" class="headerlink" title="ORDER BY"></a>ORDER BY</h2><ul>
+<li><code>SELECT * FROM film WHERE film_id &gt; 80 ORDER BY title</code><ul>
+<li>（1）根据 WHERE 等条件查询<ul>
+<li>给查询字段加索引，可以改善条件查询速度</li>
+</ul>
+</li>
+<li>（2）将查询结果放入 sort buffer（<strong>中间结果集</strong>）<ul>
+<li>中间表比较小时，直接放在内存中</li>
+<li>中间表大于 <code>sort_buffer_size</code> 时，放在硬盘中</li>
+<li>若需要优化内存占用，减小 <code>sort_buffer_size</code></li>
+<li>若需要优化排序查询时间，增大 <code>sort_buffer_size</code></li>
+</ul>
+</li>
+<li>（3）对中间结果集按照 ORDER BY 字段排序</li>
+<li>（4）回表生成完整结果集（若需要）<ul>
+<li>当行小于 <code>max_length_for_sort_data</code> 时，生成全字段中间表</li>
+<li>大于阈值时，只生成排序字段 + 主键中间表，需要回表</li>
+<li>调大阈值并不一定改善效率，因为太大的结果集排序效率低</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>1.<br>2.<br>3.<br>4. </p>
+<br/>
 
 <br/>
 
@@ -749,6 +1156,10 @@
 <h1 id="remark"><a href="#remark" class="headerlink" title="remark"></a>remark</h1><blockquote>
 <ol>
 <li>索引组织表可以再深入理解一下</li>
+<li>行记录格式需要加深记忆，再学习一遍</li>
+<li>补充知识（<strong>重要</strong>）：MySQL中的索引类型有哪些？</li>
+<li><strong>数据库结构设计原则？</strong></li>
+<li>如果加了前缀索引，但是查询的时候查询了整个字段或者左模糊，可以使用前缀索引吗？</li>
 </ol>
 </blockquote>
 <img src='' width='70%' />
@@ -916,7 +1327,7 @@
             <div class="pc-post-toc right-toc">
                 <div class="post-toc-wrap border-box">
     <div class="post-toc border-box">
-        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-text">环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E5%AE%89%E8%A3%85"><span class="nav-text">MySQL安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E9%85%8D%E7%BD%AE"><span class="nav-text">MySQL配置</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E4%B8%AASQL%E8%AF%AD%E5%8F%A5%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84"><span class="nav-text">一个SQL语句是如何执行的</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93-vs-Excel"><span class="nav-text">数据库 vs Excel</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84"><span class="nav-text">常见软件架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B1%82%E6%9E%B6%E6%9E%84"><span class="nav-text">分层架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E9%A9%B1%E5%8A%A8%E6%9E%B6%E6%9E%84"><span class="nav-text">事件驱动架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%A1%E9%81%93-%E8%BF%87%E6%BB%A4%E5%99%A8%E6%9E%B6%E6%9E%84"><span class="nav-text">管道-过滤器架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%AE%E6%A0%B8%E6%9E%B6%E6%9E%84"><span class="nav-text">微核架构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E7%9A%84%E6%9E%B6%E6%9E%84"><span class="nav-text">MySQL的架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%98%AF%E6%80%8E%E6%A0%B7%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84"><span class="nav-text">客户端是怎样连接MySQL数据库的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-IP%E8%BF%9E%E6%8E%A5%EF%BC%88%E6%9C%80%E5%B8%B8%E7%94%A8%E7%9A%84%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F%EF%BC%89"><span class="nav-text">TCP&#x2F;IP连接（最常用的连接方式）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E5%90%8D%E7%AE%A1%E9%81%93"><span class="nav-text">命名管道</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98"><span class="nav-text">共享内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UNIX%E5%9F%9F%E5%A5%97%E6%8E%A5%E5%AD%97"><span class="nav-text">UNIX域套接字</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%B8%AASQL%E8%AF%AD%E5%8F%A5%E6%98%AF%E6%80%8E%E6%A0%B7%E6%89%A7%E8%A1%8C%E7%9A%84"><span class="nav-text">一个SQL语句是怎样执行的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%99%A8"><span class="nav-text">连接器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E6%9F%A5%E8%AF%A2%EF%BC%89%E7%BC%93%E5%AD%98"><span class="nav-text">（查询）缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E5%99%A8"><span class="nav-text">分析器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%99%A8"><span class="nav-text">优化器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E5%99%A8"><span class="nav-text">执行器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E"><span class="nav-text">存储引擎</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E6%9C%89%E5%93%AA%E4%BA%9B%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%EF%BC%88%E5%9B%9B%E7%A7%8D%E5%B8%B8%E8%A7%81%E7%9A%84-MySQL-%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%EF%BC%89"><span class="nav-text">MySQL有哪些存储引擎（四种常见的 MySQL 存储引擎）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MyISAM"><span class="nav-text">MyISAM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB"><span class="nav-text">InnoDB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Memory"><span class="nav-text">Memory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Archive"><span class="nav-text">Archive</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC4%E7%AB%A0-%E5%A6%82%E4%BD%95%E5%BB%BA%E8%A1%A8%E6%9B%B4%E7%AC%A6%E5%90%88%E4%B8%9A%E5%8A%A1"><span class="nav-text">第4章 如何建表更符合业务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E7%BB%84%E7%BB%87%E8%A1%A8%EF%BC%88Index-Organized-Table-IOT%EF%BC%89"><span class="nav-text">索引组织表（Index Organized Table&#x2F;IOT）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86%EF%BC%88%E6%80%8E%E4%B9%88%E5%AD%98%E5%82%A8%E7%9A%84%EF%BC%89"><span class="nav-text">基本原理（怎么存储的）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%EF%BC%88Index%EF%BC%89"><span class="nav-text">索引（Index）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E9%94%AE%EF%BC%88Primary-Key%EF%BC%89"><span class="nav-text">主键（Primary Key）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E6%B5%81%E7%B4%A2%E5%BC%95%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95"><span class="nav-text">主流索引查找算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E6%9F%A5%E6%89%BE%EF%BC%88Linear-Search%EF%BC%89"><span class="nav-text">线性查找（Linear Search）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%EF%BC%88Binary-Search%EF%BC%89"><span class="nav-text">二分查找（Binary Search）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%9F%A5%E6%89%BE%E6%A0%91%EF%BC%88Binary-Search-Tree%EF%BC%89"><span class="nav-text">二叉查找树（Binary Search Tree）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%A0%91%EF%BC%88AVL-Tree%EF%BC%89"><span class="nav-text">平衡二叉树（AVL Tree）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B%E6%A0%91%EF%BC%88B-Tree%EF%BC%89"><span class="nav-text">B树（B Tree）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B-%E6%A0%91%EF%BC%88B-Tree%EF%BC%89"><span class="nav-text">B+树（B+ Tree）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AF%B4InnoDB%E7%B4%A2%E5%BC%95%E5%8D%B3%E6%95%B0%E6%8D%AE"><span class="nav-text">为什么说InnoDB索引即数据</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#B-%E6%A0%91%E7%B4%A2%E5%BC%95"><span class="nav-text">B+树索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95%EF%BC%88Clustered-Index%EF%BC%89"><span class="nav-text">聚簇索引（Clustered Index）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%85%E5%8A%A9%E7%B4%A2%E5%BC%95%EF%BC%88Secondary-Index%EF%BC%89"><span class="nav-text">辅助索引（Secondary Index）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InnoDB%E6%95%B0%E6%8D%AE%E8%A1%A8%E6%98%AF%E5%A6%82%E4%BD%95%E5%AD%98%E5%82%A8%E7%9A%84"><span class="nav-text">InnoDB数据表是如何存储的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#tablespace"><span class="nav-text">tablespace</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#segment"><span class="nav-text">segment</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#extent"><span class="nav-text">extent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#page"><span class="nav-text">page</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%A1%B5%E4%B8%8D%E8%83%BD%E5%A4%AA%E5%A4%A7%EF%BC%88%E6%AF%94%E5%A6%82-16MB%EF%BC%89"><span class="nav-text">为什么页不能太大（比如 16MB）?</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#I-O%E6%95%88%E7%8E%87%E9%97%AE%E9%A2%98"><span class="nav-text">I&#x2F;O效率问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E7%B2%92%E5%BA%A6%E8%BF%87%E7%B2%97"><span class="nav-text">缓存粒度过粗</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E5%86%B2%E7%AA%81%E5%A2%9E%E5%A4%A7"><span class="nav-text">并发冲突增大</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B4%A9%E6%BA%83%E6%81%A2%E5%A4%8D%E6%88%90%E6%9C%AC%E4%B8%8A%E5%8D%87"><span class="nav-text">崩溃恢复成本上升</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%A1%B5%E4%B8%8D%E8%83%BD%E5%A4%AA%E5%B0%8F%EF%BC%88%E6%AF%94%E5%A6%8216B%E6%88%96512B%EF%BC%89%EF%BC%9F"><span class="nav-text">为什么页不能太小（比如16B或512B）？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#I-O%E6%94%BE%E5%A4%A7%E4%B8%A5%E9%87%8D"><span class="nav-text">I&#x2F;O放大严重</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%83%E6%95%B0%E6%8D%AE%E7%AE%A1%E7%90%86%E6%88%90%E6%9C%AC%E9%AB%98"><span class="nav-text">元数据管理成本高</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-%E6%A0%91%E9%AB%98%E5%BA%A6%E6%80%A5%E5%89%A7%E4%B8%8A%E5%8D%87"><span class="nav-text">B+树高度急剧上升</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B5%E7%AE%A1%E7%90%86%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%A2%9E%E5%8A%A0"><span class="nav-text">页管理复杂度增加</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InnoDB%E6%95%B0%E6%8D%AE%E8%A1%8C%E9%95%BF%E4%BB%80%E4%B9%88%E6%A0%B7"><span class="nav-text">InnoDB数据行长什么样</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%ACX%E7%AB%A0"><span class="nav-text">第X章</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#remark"><span class="nav-text">remark</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-text">环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E5%AE%89%E8%A3%85"><span class="nav-text">MySQL安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E9%85%8D%E7%BD%AE"><span class="nav-text">MySQL配置</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E4%B8%AASQL%E8%AF%AD%E5%8F%A5%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84"><span class="nav-text">一个SQL语句是如何执行的</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93-vs-Excel"><span class="nav-text">数据库 vs Excel</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84"><span class="nav-text">常见软件架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B1%82%E6%9E%B6%E6%9E%84"><span class="nav-text">分层架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E9%A9%B1%E5%8A%A8%E6%9E%B6%E6%9E%84"><span class="nav-text">事件驱动架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%A1%E9%81%93-%E8%BF%87%E6%BB%A4%E5%99%A8%E6%9E%B6%E6%9E%84"><span class="nav-text">管道-过滤器架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%AE%E6%A0%B8%E6%9E%B6%E6%9E%84"><span class="nav-text">微核架构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E7%9A%84%E6%9E%B6%E6%9E%84"><span class="nav-text">MySQL的架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%98%AF%E6%80%8E%E6%A0%B7%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84"><span class="nav-text">客户端是怎样连接MySQL数据库的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-IP%E8%BF%9E%E6%8E%A5%EF%BC%88%E6%9C%80%E5%B8%B8%E7%94%A8%E7%9A%84%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F%EF%BC%89"><span class="nav-text">TCP&#x2F;IP连接（最常用的连接方式）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E5%90%8D%E7%AE%A1%E9%81%93"><span class="nav-text">命名管道</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98"><span class="nav-text">共享内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UNIX%E5%9F%9F%E5%A5%97%E6%8E%A5%E5%AD%97"><span class="nav-text">UNIX域套接字</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%B8%AASQL%E8%AF%AD%E5%8F%A5%E6%98%AF%E6%80%8E%E6%A0%B7%E6%89%A7%E8%A1%8C%E7%9A%84"><span class="nav-text">一个SQL语句是怎样执行的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%99%A8"><span class="nav-text">连接器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E6%9F%A5%E8%AF%A2%EF%BC%89%E7%BC%93%E5%AD%98"><span class="nav-text">（查询）缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E5%99%A8"><span class="nav-text">分析器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%99%A8"><span class="nav-text">优化器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E5%99%A8"><span class="nav-text">执行器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E"><span class="nav-text">存储引擎</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E6%9C%89%E5%93%AA%E4%BA%9B%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%EF%BC%88%E5%9B%9B%E7%A7%8D%E5%B8%B8%E8%A7%81%E7%9A%84-MySQL-%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%EF%BC%89"><span class="nav-text">MySQL有哪些存储引擎（四种常见的 MySQL 存储引擎）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MyISAM"><span class="nav-text">MyISAM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB"><span class="nav-text">InnoDB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Memory"><span class="nav-text">Memory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Archive"><span class="nav-text">Archive</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC4%E7%AB%A0-%E5%A6%82%E4%BD%95%E5%BB%BA%E8%A1%A8%E6%9B%B4%E7%AC%A6%E5%90%88%E4%B8%9A%E5%8A%A1"><span class="nav-text">第4章 如何建表更符合业务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E7%BB%84%E7%BB%87%E8%A1%A8%EF%BC%88Index-Organized-Table-IOT%EF%BC%89"><span class="nav-text">索引组织表（Index Organized Table&#x2F;IOT）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86%EF%BC%88%E6%80%8E%E4%B9%88%E5%AD%98%E5%82%A8%E7%9A%84%EF%BC%89"><span class="nav-text">基本原理（怎么存储的）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%EF%BC%88Index%EF%BC%89"><span class="nav-text">索引（Index）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E9%94%AE%EF%BC%88Primary-Key%EF%BC%89"><span class="nav-text">主键（Primary Key）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E6%B5%81%E7%B4%A2%E5%BC%95%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95"><span class="nav-text">主流索引查找算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E6%9F%A5%E6%89%BE%EF%BC%88Linear-Search%EF%BC%89"><span class="nav-text">线性查找（Linear Search）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%EF%BC%88Binary-Search%EF%BC%89"><span class="nav-text">二分查找（Binary Search）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%9F%A5%E6%89%BE%E6%A0%91%EF%BC%88Binary-Search-Tree%EF%BC%89"><span class="nav-text">二叉查找树（Binary Search Tree）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%A0%91%EF%BC%88AVL-Tree%EF%BC%89"><span class="nav-text">平衡二叉树（AVL Tree）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B%E6%A0%91%EF%BC%88B-Tree%EF%BC%89"><span class="nav-text">B树（B Tree）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B-%E6%A0%91%EF%BC%88B-Tree%EF%BC%89"><span class="nav-text">B+树（B+ Tree）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AF%B4InnoDB%E7%B4%A2%E5%BC%95%E5%8D%B3%E6%95%B0%E6%8D%AE"><span class="nav-text">为什么说InnoDB索引即数据</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#B-%E6%A0%91%E7%B4%A2%E5%BC%95"><span class="nav-text">B+树索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95%EF%BC%88Clustered-Index%EF%BC%89"><span class="nav-text">聚簇索引（Clustered Index）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%85%E5%8A%A9%E7%B4%A2%E5%BC%95%EF%BC%88Secondary-Index%EF%BC%89"><span class="nav-text">辅助索引（Secondary Index）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InnoDB%E6%95%B0%E6%8D%AE%E8%A1%A8%E6%98%AF%E5%A6%82%E4%BD%95%E5%AD%98%E5%82%A8%E7%9A%84"><span class="nav-text">InnoDB数据表是如何存储的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#tablespace"><span class="nav-text">tablespace</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#segment"><span class="nav-text">segment</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#extent"><span class="nav-text">extent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#page"><span class="nav-text">page</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%A1%B5%E4%B8%8D%E8%83%BD%E5%A4%AA%E5%A4%A7%EF%BC%88%E6%AF%94%E5%A6%82-16MB%EF%BC%89"><span class="nav-text">为什么页不能太大（比如 16MB）?</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#I-O%E6%95%88%E7%8E%87%E9%97%AE%E9%A2%98"><span class="nav-text">I&#x2F;O效率问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E7%B2%92%E5%BA%A6%E8%BF%87%E7%B2%97"><span class="nav-text">缓存粒度过粗</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E5%86%B2%E7%AA%81%E5%A2%9E%E5%A4%A7"><span class="nav-text">并发冲突增大</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B4%A9%E6%BA%83%E6%81%A2%E5%A4%8D%E6%88%90%E6%9C%AC%E4%B8%8A%E5%8D%87"><span class="nav-text">崩溃恢复成本上升</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%A1%B5%E4%B8%8D%E8%83%BD%E5%A4%AA%E5%B0%8F%EF%BC%88%E6%AF%94%E5%A6%8216B%E6%88%96512B%EF%BC%89%EF%BC%9F"><span class="nav-text">为什么页不能太小（比如16B或512B）？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#I-O%E6%94%BE%E5%A4%A7%E4%B8%A5%E9%87%8D"><span class="nav-text">I&#x2F;O放大严重</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%83%E6%95%B0%E6%8D%AE%E7%AE%A1%E7%90%86%E6%88%90%E6%9C%AC%E9%AB%98"><span class="nav-text">元数据管理成本高</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-%E6%A0%91%E9%AB%98%E5%BA%A6%E6%80%A5%E5%89%A7%E4%B8%8A%E5%8D%87"><span class="nav-text">B+树高度急剧上升</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B5%E7%AE%A1%E7%90%86%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%A2%9E%E5%8A%A0"><span class="nav-text">页管理复杂度增加</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InnoDB%E6%95%B0%E6%8D%AE%E8%A1%8C%E9%95%BF%E4%BB%80%E4%B9%88%E6%A0%B7"><span class="nav-text">InnoDB数据行长什么样</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB%E4%B8%AD%E7%9A%84%E5%8F%98%E9%95%BF%E5%88%97%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-text">InnoDB中的变长列有哪些？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%8C%E6%BA%A2%E5%87%BA%E6%95%B0%E6%8D%AE"><span class="nav-text">行溢出数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB-%E8%A1%8C%E8%AE%B0%E5%BD%95%E6%A0%BC%E5%BC%8F-Row-Format"><span class="nav-text">InnoDB 行记录格式 Row Format</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Redundant"><span class="nav-text">Redundant</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Compact"><span class="nav-text">Compact</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Dynamic"><span class="nav-text">Dynamic</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Compressed"><span class="nav-text">Compressed</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E6%9C%89%E5%93%AA%E4%BA%9B%E5%B7%A6%E4%BE%A7%E7%94%A8%E6%B3%95"><span class="nav-text">索引有哪些左侧用法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95"><span class="nav-text">联合索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%89%8D%E7%BC%80%E7%B4%A2%E5%BC%95"><span class="nav-text">字符串的前缀索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2-LIKE-%E6%9F%A5%E8%AF%A2%E4%B8%8E%E7%B4%A2%E5%BC%95"><span class="nav-text">字符串 LIKE 查询与索引</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%BA%A6%E6%9D%9F%E6%95%B0%E6%8D%AE"><span class="nav-text">如何约束数据</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB%E7%BA%A6%E6%9D%9F%E6%95%B0%E6%8D%AE%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-text">InnoDB约束数据的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Primary-Key-Unique-Key"><span class="nav-text">Primary Key &#x2F; Unique Key</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Foreign-Key"><span class="nav-text">Foreign Key</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Default-NOT-NULL"><span class="nav-text">Default &#x2F; NOT NULL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="nav-text">触发器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#View%EF%BC%88%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%AD%98%E5%9C%A8%E7%9A%84%E6%95%B0%E6%8D%AE%E8%A1%A8%EF%BC%89"><span class="nav-text">View（如何使用不存在的数据表）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%EF%BC%88%E7%90%86%E8%AE%BA-%E5%AE%9E%E8%B7%B5%EF%BC%89"><span class="nav-text">总结（理论-实践）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC5%E7%AB%A0-%E6%80%8E%E4%B9%88%E6%9F%A5%E8%AF%A2%E9%80%9F%E5%BA%A6%E6%9B%B4%E5%BF%AB"><span class="nav-text">第5章 怎么查询速度更快</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E7%A4%BA%E4%BE%8B%E6%95%B0%E6%8D%AE%E5%BA%93sakila"><span class="nav-text">安装示例数据库sakila</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A6%86%E7%9B%96%E7%B4%A2%E5%BC%95"><span class="nav-text">覆盖索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%A1%AE%E5%AE%9A%E7%94%A8%E5%93%AA%E6%9D%A1%E7%B4%A2%E5%BC%95"><span class="nav-text">如何确定用哪条索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-count-%E5%87%BD%E6%95%B0"><span class="nav-text">MySQL count() 函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ORDER-BY"><span class="nav-text">ORDER BY</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%ACX%E7%AB%A0"><span class="nav-text">第X章</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#remark"><span class="nav-text">remark</span></a></li></ol>
     </div>
 </div>
 
@@ -958,7 +1369,7 @@
             
                 <span class="count-item border-box word">
                     <span class="item-type border-box">Total words</span>
-                    <span class="item-value border-box word">68.5k</span>
+                    <span class="item-value border-box word">70.7k</span>
                 </span>
             
 
@@ -1111,7 +1522,7 @@
             <div class="tablet-post-toc">
                 <div class="post-toc-wrap border-box">
     <div class="post-toc border-box">
-        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-text">环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E5%AE%89%E8%A3%85"><span class="nav-text">MySQL安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E9%85%8D%E7%BD%AE"><span class="nav-text">MySQL配置</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E4%B8%AASQL%E8%AF%AD%E5%8F%A5%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84"><span class="nav-text">一个SQL语句是如何执行的</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93-vs-Excel"><span class="nav-text">数据库 vs Excel</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84"><span class="nav-text">常见软件架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B1%82%E6%9E%B6%E6%9E%84"><span class="nav-text">分层架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E9%A9%B1%E5%8A%A8%E6%9E%B6%E6%9E%84"><span class="nav-text">事件驱动架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%A1%E9%81%93-%E8%BF%87%E6%BB%A4%E5%99%A8%E6%9E%B6%E6%9E%84"><span class="nav-text">管道-过滤器架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%AE%E6%A0%B8%E6%9E%B6%E6%9E%84"><span class="nav-text">微核架构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E7%9A%84%E6%9E%B6%E6%9E%84"><span class="nav-text">MySQL的架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%98%AF%E6%80%8E%E6%A0%B7%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84"><span class="nav-text">客户端是怎样连接MySQL数据库的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-IP%E8%BF%9E%E6%8E%A5%EF%BC%88%E6%9C%80%E5%B8%B8%E7%94%A8%E7%9A%84%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F%EF%BC%89"><span class="nav-text">TCP&#x2F;IP连接（最常用的连接方式）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E5%90%8D%E7%AE%A1%E9%81%93"><span class="nav-text">命名管道</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98"><span class="nav-text">共享内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UNIX%E5%9F%9F%E5%A5%97%E6%8E%A5%E5%AD%97"><span class="nav-text">UNIX域套接字</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%B8%AASQL%E8%AF%AD%E5%8F%A5%E6%98%AF%E6%80%8E%E6%A0%B7%E6%89%A7%E8%A1%8C%E7%9A%84"><span class="nav-text">一个SQL语句是怎样执行的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%99%A8"><span class="nav-text">连接器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E6%9F%A5%E8%AF%A2%EF%BC%89%E7%BC%93%E5%AD%98"><span class="nav-text">（查询）缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E5%99%A8"><span class="nav-text">分析器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%99%A8"><span class="nav-text">优化器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E5%99%A8"><span class="nav-text">执行器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E"><span class="nav-text">存储引擎</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E6%9C%89%E5%93%AA%E4%BA%9B%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%EF%BC%88%E5%9B%9B%E7%A7%8D%E5%B8%B8%E8%A7%81%E7%9A%84-MySQL-%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%EF%BC%89"><span class="nav-text">MySQL有哪些存储引擎（四种常见的 MySQL 存储引擎）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MyISAM"><span class="nav-text">MyISAM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB"><span class="nav-text">InnoDB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Memory"><span class="nav-text">Memory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Archive"><span class="nav-text">Archive</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC4%E7%AB%A0-%E5%A6%82%E4%BD%95%E5%BB%BA%E8%A1%A8%E6%9B%B4%E7%AC%A6%E5%90%88%E4%B8%9A%E5%8A%A1"><span class="nav-text">第4章 如何建表更符合业务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E7%BB%84%E7%BB%87%E8%A1%A8%EF%BC%88Index-Organized-Table-IOT%EF%BC%89"><span class="nav-text">索引组织表（Index Organized Table&#x2F;IOT）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86%EF%BC%88%E6%80%8E%E4%B9%88%E5%AD%98%E5%82%A8%E7%9A%84%EF%BC%89"><span class="nav-text">基本原理（怎么存储的）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%EF%BC%88Index%EF%BC%89"><span class="nav-text">索引（Index）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E9%94%AE%EF%BC%88Primary-Key%EF%BC%89"><span class="nav-text">主键（Primary Key）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E6%B5%81%E7%B4%A2%E5%BC%95%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95"><span class="nav-text">主流索引查找算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E6%9F%A5%E6%89%BE%EF%BC%88Linear-Search%EF%BC%89"><span class="nav-text">线性查找（Linear Search）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%EF%BC%88Binary-Search%EF%BC%89"><span class="nav-text">二分查找（Binary Search）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%9F%A5%E6%89%BE%E6%A0%91%EF%BC%88Binary-Search-Tree%EF%BC%89"><span class="nav-text">二叉查找树（Binary Search Tree）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%A0%91%EF%BC%88AVL-Tree%EF%BC%89"><span class="nav-text">平衡二叉树（AVL Tree）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B%E6%A0%91%EF%BC%88B-Tree%EF%BC%89"><span class="nav-text">B树（B Tree）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B-%E6%A0%91%EF%BC%88B-Tree%EF%BC%89"><span class="nav-text">B+树（B+ Tree）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AF%B4InnoDB%E7%B4%A2%E5%BC%95%E5%8D%B3%E6%95%B0%E6%8D%AE"><span class="nav-text">为什么说InnoDB索引即数据</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#B-%E6%A0%91%E7%B4%A2%E5%BC%95"><span class="nav-text">B+树索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95%EF%BC%88Clustered-Index%EF%BC%89"><span class="nav-text">聚簇索引（Clustered Index）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%85%E5%8A%A9%E7%B4%A2%E5%BC%95%EF%BC%88Secondary-Index%EF%BC%89"><span class="nav-text">辅助索引（Secondary Index）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InnoDB%E6%95%B0%E6%8D%AE%E8%A1%A8%E6%98%AF%E5%A6%82%E4%BD%95%E5%AD%98%E5%82%A8%E7%9A%84"><span class="nav-text">InnoDB数据表是如何存储的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#tablespace"><span class="nav-text">tablespace</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#segment"><span class="nav-text">segment</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#extent"><span class="nav-text">extent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#page"><span class="nav-text">page</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%A1%B5%E4%B8%8D%E8%83%BD%E5%A4%AA%E5%A4%A7%EF%BC%88%E6%AF%94%E5%A6%82-16MB%EF%BC%89"><span class="nav-text">为什么页不能太大（比如 16MB）?</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#I-O%E6%95%88%E7%8E%87%E9%97%AE%E9%A2%98"><span class="nav-text">I&#x2F;O效率问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E7%B2%92%E5%BA%A6%E8%BF%87%E7%B2%97"><span class="nav-text">缓存粒度过粗</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E5%86%B2%E7%AA%81%E5%A2%9E%E5%A4%A7"><span class="nav-text">并发冲突增大</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B4%A9%E6%BA%83%E6%81%A2%E5%A4%8D%E6%88%90%E6%9C%AC%E4%B8%8A%E5%8D%87"><span class="nav-text">崩溃恢复成本上升</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%A1%B5%E4%B8%8D%E8%83%BD%E5%A4%AA%E5%B0%8F%EF%BC%88%E6%AF%94%E5%A6%8216B%E6%88%96512B%EF%BC%89%EF%BC%9F"><span class="nav-text">为什么页不能太小（比如16B或512B）？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#I-O%E6%94%BE%E5%A4%A7%E4%B8%A5%E9%87%8D"><span class="nav-text">I&#x2F;O放大严重</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%83%E6%95%B0%E6%8D%AE%E7%AE%A1%E7%90%86%E6%88%90%E6%9C%AC%E9%AB%98"><span class="nav-text">元数据管理成本高</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-%E6%A0%91%E9%AB%98%E5%BA%A6%E6%80%A5%E5%89%A7%E4%B8%8A%E5%8D%87"><span class="nav-text">B+树高度急剧上升</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B5%E7%AE%A1%E7%90%86%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%A2%9E%E5%8A%A0"><span class="nav-text">页管理复杂度增加</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InnoDB%E6%95%B0%E6%8D%AE%E8%A1%8C%E9%95%BF%E4%BB%80%E4%B9%88%E6%A0%B7"><span class="nav-text">InnoDB数据行长什么样</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%ACX%E7%AB%A0"><span class="nav-text">第X章</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#remark"><span class="nav-text">remark</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-text">环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E5%AE%89%E8%A3%85"><span class="nav-text">MySQL安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E9%85%8D%E7%BD%AE"><span class="nav-text">MySQL配置</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E4%B8%AASQL%E8%AF%AD%E5%8F%A5%E6%98%AF%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E7%9A%84"><span class="nav-text">一个SQL语句是如何执行的</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93-vs-Excel"><span class="nav-text">数据库 vs Excel</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84"><span class="nav-text">常见软件架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B1%82%E6%9E%B6%E6%9E%84"><span class="nav-text">分层架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E9%A9%B1%E5%8A%A8%E6%9E%B6%E6%9E%84"><span class="nav-text">事件驱动架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%A1%E9%81%93-%E8%BF%87%E6%BB%A4%E5%99%A8%E6%9E%B6%E6%9E%84"><span class="nav-text">管道-过滤器架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%AE%E6%A0%B8%E6%9E%B6%E6%9E%84"><span class="nav-text">微核架构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E7%9A%84%E6%9E%B6%E6%9E%84"><span class="nav-text">MySQL的架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%98%AF%E6%80%8E%E6%A0%B7%E8%BF%9E%E6%8E%A5MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84"><span class="nav-text">客户端是怎样连接MySQL数据库的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-IP%E8%BF%9E%E6%8E%A5%EF%BC%88%E6%9C%80%E5%B8%B8%E7%94%A8%E7%9A%84%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F%EF%BC%89"><span class="nav-text">TCP&#x2F;IP连接（最常用的连接方式）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E5%90%8D%E7%AE%A1%E9%81%93"><span class="nav-text">命名管道</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98"><span class="nav-text">共享内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UNIX%E5%9F%9F%E5%A5%97%E6%8E%A5%E5%AD%97"><span class="nav-text">UNIX域套接字</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%B8%AASQL%E8%AF%AD%E5%8F%A5%E6%98%AF%E6%80%8E%E6%A0%B7%E6%89%A7%E8%A1%8C%E7%9A%84"><span class="nav-text">一个SQL语句是怎样执行的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%99%A8"><span class="nav-text">连接器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E6%9F%A5%E8%AF%A2%EF%BC%89%E7%BC%93%E5%AD%98"><span class="nav-text">（查询）缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E5%99%A8"><span class="nav-text">分析器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%99%A8"><span class="nav-text">优化器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E5%99%A8"><span class="nav-text">执行器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E"><span class="nav-text">存储引擎</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E6%9C%89%E5%93%AA%E4%BA%9B%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%EF%BC%88%E5%9B%9B%E7%A7%8D%E5%B8%B8%E8%A7%81%E7%9A%84-MySQL-%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%EF%BC%89"><span class="nav-text">MySQL有哪些存储引擎（四种常见的 MySQL 存储引擎）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MyISAM"><span class="nav-text">MyISAM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB"><span class="nav-text">InnoDB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Memory"><span class="nav-text">Memory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Archive"><span class="nav-text">Archive</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC4%E7%AB%A0-%E5%A6%82%E4%BD%95%E5%BB%BA%E8%A1%A8%E6%9B%B4%E7%AC%A6%E5%90%88%E4%B8%9A%E5%8A%A1"><span class="nav-text">第4章 如何建表更符合业务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E7%BB%84%E7%BB%87%E8%A1%A8%EF%BC%88Index-Organized-Table-IOT%EF%BC%89"><span class="nav-text">索引组织表（Index Organized Table&#x2F;IOT）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86%EF%BC%88%E6%80%8E%E4%B9%88%E5%AD%98%E5%82%A8%E7%9A%84%EF%BC%89"><span class="nav-text">基本原理（怎么存储的）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%EF%BC%88Index%EF%BC%89"><span class="nav-text">索引（Index）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E9%94%AE%EF%BC%88Primary-Key%EF%BC%89"><span class="nav-text">主键（Primary Key）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E6%B5%81%E7%B4%A2%E5%BC%95%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95"><span class="nav-text">主流索引查找算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E6%9F%A5%E6%89%BE%EF%BC%88Linear-Search%EF%BC%89"><span class="nav-text">线性查找（Linear Search）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE%EF%BC%88Binary-Search%EF%BC%89"><span class="nav-text">二分查找（Binary Search）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%9F%A5%E6%89%BE%E6%A0%91%EF%BC%88Binary-Search-Tree%EF%BC%89"><span class="nav-text">二叉查找树（Binary Search Tree）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%A0%91%EF%BC%88AVL-Tree%EF%BC%89"><span class="nav-text">平衡二叉树（AVL Tree）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B%E6%A0%91%EF%BC%88B-Tree%EF%BC%89"><span class="nav-text">B树（B Tree）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B-%E6%A0%91%EF%BC%88B-Tree%EF%BC%89"><span class="nav-text">B+树（B+ Tree）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AF%B4InnoDB%E7%B4%A2%E5%BC%95%E5%8D%B3%E6%95%B0%E6%8D%AE"><span class="nav-text">为什么说InnoDB索引即数据</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#B-%E6%A0%91%E7%B4%A2%E5%BC%95"><span class="nav-text">B+树索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95%EF%BC%88Clustered-Index%EF%BC%89"><span class="nav-text">聚簇索引（Clustered Index）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%85%E5%8A%A9%E7%B4%A2%E5%BC%95%EF%BC%88Secondary-Index%EF%BC%89"><span class="nav-text">辅助索引（Secondary Index）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InnoDB%E6%95%B0%E6%8D%AE%E8%A1%A8%E6%98%AF%E5%A6%82%E4%BD%95%E5%AD%98%E5%82%A8%E7%9A%84"><span class="nav-text">InnoDB数据表是如何存储的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#tablespace"><span class="nav-text">tablespace</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#segment"><span class="nav-text">segment</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#extent"><span class="nav-text">extent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#page"><span class="nav-text">page</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%A1%B5%E4%B8%8D%E8%83%BD%E5%A4%AA%E5%A4%A7%EF%BC%88%E6%AF%94%E5%A6%82-16MB%EF%BC%89"><span class="nav-text">为什么页不能太大（比如 16MB）?</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#I-O%E6%95%88%E7%8E%87%E9%97%AE%E9%A2%98"><span class="nav-text">I&#x2F;O效率问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E7%B2%92%E5%BA%A6%E8%BF%87%E7%B2%97"><span class="nav-text">缓存粒度过粗</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E5%86%B2%E7%AA%81%E5%A2%9E%E5%A4%A7"><span class="nav-text">并发冲突增大</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B4%A9%E6%BA%83%E6%81%A2%E5%A4%8D%E6%88%90%E6%9C%AC%E4%B8%8A%E5%8D%87"><span class="nav-text">崩溃恢复成本上升</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%A1%B5%E4%B8%8D%E8%83%BD%E5%A4%AA%E5%B0%8F%EF%BC%88%E6%AF%94%E5%A6%8216B%E6%88%96512B%EF%BC%89%EF%BC%9F"><span class="nav-text">为什么页不能太小（比如16B或512B）？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#I-O%E6%94%BE%E5%A4%A7%E4%B8%A5%E9%87%8D"><span class="nav-text">I&#x2F;O放大严重</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%83%E6%95%B0%E6%8D%AE%E7%AE%A1%E7%90%86%E6%88%90%E6%9C%AC%E9%AB%98"><span class="nav-text">元数据管理成本高</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-%E6%A0%91%E9%AB%98%E5%BA%A6%E6%80%A5%E5%89%A7%E4%B8%8A%E5%8D%87"><span class="nav-text">B+树高度急剧上升</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B5%E7%AE%A1%E7%90%86%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%A2%9E%E5%8A%A0"><span class="nav-text">页管理复杂度增加</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InnoDB%E6%95%B0%E6%8D%AE%E8%A1%8C%E9%95%BF%E4%BB%80%E4%B9%88%E6%A0%B7"><span class="nav-text">InnoDB数据行长什么样</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB%E4%B8%AD%E7%9A%84%E5%8F%98%E9%95%BF%E5%88%97%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-text">InnoDB中的变长列有哪些？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%8C%E6%BA%A2%E5%87%BA%E6%95%B0%E6%8D%AE"><span class="nav-text">行溢出数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB-%E8%A1%8C%E8%AE%B0%E5%BD%95%E6%A0%BC%E5%BC%8F-Row-Format"><span class="nav-text">InnoDB 行记录格式 Row Format</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Redundant"><span class="nav-text">Redundant</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Compact"><span class="nav-text">Compact</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Dynamic"><span class="nav-text">Dynamic</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Compressed"><span class="nav-text">Compressed</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E6%9C%89%E5%93%AA%E4%BA%9B%E5%B7%A6%E4%BE%A7%E7%94%A8%E6%B3%95"><span class="nav-text">索引有哪些左侧用法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95"><span class="nav-text">联合索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%89%8D%E7%BC%80%E7%B4%A2%E5%BC%95"><span class="nav-text">字符串的前缀索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2-LIKE-%E6%9F%A5%E8%AF%A2%E4%B8%8E%E7%B4%A2%E5%BC%95"><span class="nav-text">字符串 LIKE 查询与索引</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%BA%A6%E6%9D%9F%E6%95%B0%E6%8D%AE"><span class="nav-text">如何约束数据</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB%E7%BA%A6%E6%9D%9F%E6%95%B0%E6%8D%AE%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-text">InnoDB约束数据的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Primary-Key-Unique-Key"><span class="nav-text">Primary Key &#x2F; Unique Key</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Foreign-Key"><span class="nav-text">Foreign Key</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Default-NOT-NULL"><span class="nav-text">Default &#x2F; NOT NULL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="nav-text">触发器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#View%EF%BC%88%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%AD%98%E5%9C%A8%E7%9A%84%E6%95%B0%E6%8D%AE%E8%A1%A8%EF%BC%89"><span class="nav-text">View（如何使用不存在的数据表）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93%EF%BC%88%E7%90%86%E8%AE%BA-%E5%AE%9E%E8%B7%B5%EF%BC%89"><span class="nav-text">总结（理论-实践）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC5%E7%AB%A0-%E6%80%8E%E4%B9%88%E6%9F%A5%E8%AF%A2%E9%80%9F%E5%BA%A6%E6%9B%B4%E5%BF%AB"><span class="nav-text">第5章 怎么查询速度更快</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E7%A4%BA%E4%BE%8B%E6%95%B0%E6%8D%AE%E5%BA%93sakila"><span class="nav-text">安装示例数据库sakila</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A6%86%E7%9B%96%E7%B4%A2%E5%BC%95"><span class="nav-text">覆盖索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%A1%AE%E5%AE%9A%E7%94%A8%E5%93%AA%E6%9D%A1%E7%B4%A2%E5%BC%95"><span class="nav-text">如何确定用哪条索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-count-%E5%87%BD%E6%95%B0"><span class="nav-text">MySQL count() 函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ORDER-BY"><span class="nav-text">ORDER BY</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%ACX%E7%AB%A0"><span class="nav-text">第X章</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-text">Reference</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#remark"><span class="nav-text">remark</span></a></li></ol>
     </div>
 </div>
 
